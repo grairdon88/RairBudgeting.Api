@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api", "RairBudgeting.Api\RairBudgeting.Api.csproj", "{04C73EEF-914B-49E7-8DED-FE760B50D2B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api.Domain", "RairBudgeting.Api.Domain\RairBudgeting.Api.Domain.csproj", "{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api.Domain.Interfaces", "RairBudgeting.Api.Domain.Interfaces\RairBudgeting.Api.Domain.Interfaces.csproj", "{4D236976-E903-43B9-9637-8D2061FDB88F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api.Infrastructure.Interfaces", "RairBudgeting.Api.Infrastructure.Interfaces\RairBudgeting.Api.Infrastructure.Interfaces.csproj", "{2770C917-225E-49D0-8DA6-98A84600EA81}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api.Infrastructure", "RairBudgeting.Api.Infrastructure\RairBudgeting.Api.Infrastructure.csproj", "{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.Api.v1", "RairBudgeting.Api.v1\RairBudgeting.Api.v1.csproj", "{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{71C1FC36-A8BF-4A7F-AF3B-D11878A8D1AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{2BF5DA9E-09D9-4A2F-BA00-2E9E52A66449}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{03CD32E4-997D-4FFD-B676-9F1747962C86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2B8B00D2-B117-45A2-AD6A-BD652D53BF6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RairBudgeting.UnitTests", "RairBudgeting.UnitTests\RairBudgeting.UnitTests.csproj", "{A82996D4-2D40-4578-B190-E428345831C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04C73EEF-914B-49E7-8DED-FE760B50D2B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04C73EEF-914B-49E7-8DED-FE760B50D2B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04C73EEF-914B-49E7-8DED-FE760B50D2B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04C73EEF-914B-49E7-8DED-FE760B50D2B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D236976-E903-43B9-9637-8D2061FDB88F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D236976-E903-43B9-9637-8D2061FDB88F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D236976-E903-43B9-9637-8D2061FDB88F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D236976-E903-43B9-9637-8D2061FDB88F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2770C917-225E-49D0-8DA6-98A84600EA81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2770C917-225E-49D0-8DA6-98A84600EA81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2770C917-225E-49D0-8DA6-98A84600EA81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2770C917-225E-49D0-8DA6-98A84600EA81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82996D4-2D40-4578-B190-E428345831C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82996D4-2D40-4578-B190-E428345831C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82996D4-2D40-4578-B190-E428345831C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82996D4-2D40-4578-B190-E428345831C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04C73EEF-914B-49E7-8DED-FE760B50D2B7} = {71C1FC36-A8BF-4A7F-AF3B-D11878A8D1AD}
+		{A02576D8-0C74-4D70-99C4-E1A9BC45CA7C} = {2BF5DA9E-09D9-4A2F-BA00-2E9E52A66449}
+		{4D236976-E903-43B9-9637-8D2061FDB88F} = {2BF5DA9E-09D9-4A2F-BA00-2E9E52A66449}
+		{2770C917-225E-49D0-8DA6-98A84600EA81} = {03CD32E4-997D-4FFD-B676-9F1747962C86}
+		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9} = {03CD32E4-997D-4FFD-B676-9F1747962C86}
+		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70} = {71C1FC36-A8BF-4A7F-AF3B-D11878A8D1AD}
+		{A82996D4-2D40-4578-B190-E428345831C0} = {2B8B00D2-B117-45A2-AD6A-BD652D53BF6F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A038CFB2-5B19-45E5-B5B8-6D6016A1FDBE}
+	EndGlobalSection
+EndGlobal
