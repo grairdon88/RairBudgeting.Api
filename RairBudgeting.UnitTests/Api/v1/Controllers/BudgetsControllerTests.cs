@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.UnitTests.Api.v1;
+namespace RairBudgeting.UnitTests.Api.v1.Controllers;
 [TestClass]
 public class BudgetsControllerTests : UnitTestBase {
     private Mock<IUnitOfWork> _unitOfWorkMock;

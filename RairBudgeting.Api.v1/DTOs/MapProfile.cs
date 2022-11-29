@@ -20,5 +20,7 @@ public class MapProfile : Profile {
         CreateMap<BudgetAddCommand, Domain.Entities.Budget>();
         CreateMap<BudgetUpdateCommand, Domain.Entities.Budget>();
         CreateMap<AddBudgetLineToBudgetCommand, Domain.Entities.BudgetLine>();
+        CreateMap<BudgetCategoryAddCommand, Domain.Entities.BudgetCategory>();
+        CreateMap<BudgetCategoryUpdateCommand, Domain.Entities.BudgetCategory>();
     }
 }

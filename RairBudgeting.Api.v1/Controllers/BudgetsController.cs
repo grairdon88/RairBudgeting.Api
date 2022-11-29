@@ -109,9 +109,9 @@ public class BudgetsController : ControllerBase {
     }
 
     [HttpPost]
-    [Route("BudgetLines")]
+    [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Create([FromBody] AddBudgetLineToBudgetCommand newEntity) {
+    public async Task<IActionResult> Create([FromQuery] int id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
         var isCreated = await _mediator.Send(newEntity);
 
         return Ok();
