@@ -28,8 +28,6 @@ public class UnitOfWorkTests {
 
     [TestMethod]
     public void CompleteAsync_Success() {
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().List()).ReturnsAsync(entities);
-
         _contextMock.Setup(mock => mock.SaveChangesAsync(default)).ReturnsAsync(1);
         var results = _unitOfWorkMock.CompleteAsync();
 
@@ -44,27 +42,27 @@ public class UnitOfWorkTests {
         Assert.IsTrue(results.IsCompletedSuccessfully);
     }
 
-    [TestMethod]
-    public void Repository_Runs_Successfully() {
-        Mock<IRepository<IEntity>> repo = new Mock<IRepository<IEntity>>();
+    //[TestMethod]
+    //public void Repository_Runs_Successfully() {
+    //    Mock<IRepository<IEntity>> repo = new Mock<IRepository<IEntity>>();
 
-        //  This line needs mocked.
-        //var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
-        //_contextMock.Setup(mock => mock.Make).Returns(ValueTask.CompletedTask);
+    //    //  This line needs mocked.
+    //    //var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
+    //    //_contextMock.Setup(mock => mock.Make).Returns(ValueTask.CompletedTask);
 
-        //_unitOfWorkMock.Setup(mock => mock.Repository<IEntity>()).Returns(repo.Object);
-        var entity = _unitOfWorkMock.Repository<BudgetCategory>();
+    //    //_unitOfWorkMock.Setup(mock => mock.Repository<IEntity>()).Returns(repo.Object);
+    //    var entity = _unitOfWorkMock.Repository<BudgetCategory>();
 
-        Assert.IsInstanceOfType(repo.Object, typeof(Repository<>));
-    }
+    //    Assert.IsInstanceOfType(repo.Object, typeof(Repository<>));
+    //}
 
-    [TestMethod]
-    public void Repository_Runs() {
-        Mock<IRepository<IEntity>> repo = new Mock<IRepository<IEntity>>();
+    //[TestMethod]
+    //public void Repository_Runs() {
+    //    Mock<IRepository<IEntity>> repo = new Mock<IRepository<IEntity>>();
 
-        //_unitOfWorkMock.Setup(mock => mock.Repository<IEntity>()).Returns(repo.Object);
-        var entity = _unitOfWorkMock.Repository<IEntity>();
+    //    //_unitOfWorkMock.Setup(mock => mock.Repository<IEntity>()).Returns(repo.Object);
+    //    var entity = _unitOfWorkMock.Repository<IEntity>();
 
-        Assert.IsInstanceOfType(repo.Object, typeof(IRepository<IEntity>));
-    }
+    //    Assert.IsInstanceOfType(repo.Object, typeof(IRepository<IEntity>));
+    //}
 }

@@ -21,6 +21,12 @@ public class BudgetEntityTypeConfiguration : IEntityTypeConfiguration<Budget> {
             //.UsePropertyAccessMode(PropertyAccessMode.Property)
             .IsRequired();
 
+
+        builder.Property(b => b.Amount)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasDefaultValue(0)
+            .IsRequired();
+
         builder.Property(b => b.IsDeleted)
             //.UsePropertyAccessMode(PropertyAccessMode.Property)
             .IsRequired();

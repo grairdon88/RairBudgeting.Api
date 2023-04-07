@@ -23,8 +23,9 @@ public class BudgetUpdateCommandHandler : IRequestHandler<BudgetUpdateCommand, b
 
     public async Task<bool> Handle(BudgetUpdateCommand request, CancellationToken cancellationToken) {
         var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.Id);
+
         entity.BudgetTime = request.BudgetTime;
-        entity.IsDeleted = request.IsDeleted;  
+
         await _unitOfWork.Repository<Domain.Entities.Budget>().Update(entity);
 
         return true;

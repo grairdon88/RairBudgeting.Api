@@ -10,12 +10,10 @@ using RairBudgeting.Api.Domain.Entities;
 
 namespace RairBudgeting.Api.v1.DTOs.Commands.Handlers;
 public class BudgetAddCommandHandler : IRequestHandler<BudgetAddCommand, Budget> {
-    private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public BudgetAddCommandHandler(IUnitOfWork unitOfWork, IMediator mediator, IMapper mapper) {
-        _mediator = mediator;
+    public BudgetAddCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }

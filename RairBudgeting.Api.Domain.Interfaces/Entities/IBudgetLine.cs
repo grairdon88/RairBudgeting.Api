@@ -9,6 +9,7 @@ public interface IBudgetLine : IEntity {
     string Name { get; set; }
 
     IBudgetCategory BudgetCategory { get; set; }
+    decimal Amount { get; set; }
 
     bool IsDeleted { get; set; }
 
