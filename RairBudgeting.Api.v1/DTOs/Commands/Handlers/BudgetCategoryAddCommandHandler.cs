@@ -9,12 +9,10 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.v1.DTOs.Commands.Handlers;
 public class BudgetCategoryAddCommandHandler : IRequestHandler<BudgetCategoryAddCommand, BudgetCategory> {
-    private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public BudgetCategoryAddCommandHandler(IUnitOfWork unitOfWork, IMediator mediator, IMapper mapper) {
-        _mediator = mediator;
+    public BudgetCategoryAddCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }

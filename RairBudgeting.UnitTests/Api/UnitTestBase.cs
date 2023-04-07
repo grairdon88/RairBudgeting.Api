@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -19,4 +21,11 @@ public class UnitTestBase {
     public void SetupMapper<T, S>(T target, S source) {
         _mapper.Setup(m => m.Map<T>(source)).Returns(target);
     }
+
+    public void AssertHttpStatusisValid<T>(IActionResult result) {
+        Assert.IsInstanceOfType(result, typeof(T));
+        Assert.IsNotNull((T)result);
+    }
+    
+
 }

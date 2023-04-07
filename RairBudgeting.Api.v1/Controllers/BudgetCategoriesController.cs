@@ -105,17 +105,9 @@ public class BudgetCategoriesController : ControllerBase {
     public async Task<IActionResult> Update([FromBody] DTOs.Commands.BudgetCategoryUpdateCommand entity) {
 
         try {
-            var existingEntity = await _unitOfWork.Repository<BudgetCategory>().GetById(entity.Id);
+            var isEntityUpdated = await _mediator.Send(entity);
 
-            if (existingEntity == null) {
-                return new NotFoundResult();
-            }
-
-            var createdEntity = await _mediator.Send(existingEntity);
-
-            await _unitOfWork.Repository<BudgetCategory>().Update(_mapper.Map<Domain.Entities.BudgetCategory>(existingEntity));
-            await _unitOfWork.CompleteAsync();
-            return Ok(entity);
+            return Ok();
         }
         catch (Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {

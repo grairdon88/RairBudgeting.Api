@@ -43,29 +43,35 @@ public class BudgetsController : ControllerBase {
         }
     }
 
-    [HttpGet]
-    [Route("matches")]
+    //[HttpGet]
+    //[Route("matches")]
 
-    public async Task<IActionResult> Find([FromQuery] int id) {
-        try {
-            var entity = await _unitOfWork.Repository<Budget>().Find();
+    //public async Task<IActionResult> Find([FromQuery] int id) {
+    //    try {
+    //        var entity = await _unitOfWork.Repository<Budget>().Find();
 
-            return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entity));
-        }
-        catch (Exception ex) {
-            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "An unexpected error occured.",
-                Detail = ex.Message
-            });
-        }
-    }
+    //        return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entity));
+    //    }
+    //    catch (Exception ex) {
+    //        return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+    //            Status = StatusCodes.Status500InternalServerError,
+    //            Title = "An unexpected error occured.",
+    //            Detail = ex.Message
+    //        });
+    //    }
+    //}
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] int id, [FromQuery] IEnumerable<string> includedEntities) {
         try {
             var entities = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id, includedEntities));
+            
+
+            if(entities == null || entities.Count() == 0) {
+                return NotFound();
+            }
             var entity = entities.FirstOrDefault();
+
             return Ok(_mapper.Map<DTOs.Budget>(entity));
         }
         catch (Exception ex) {
@@ -76,21 +82,6 @@ public class BudgetsController : ControllerBase {
             });
         }
     }
-
-    //public async Task<IActionResult> Get([FromQuery] IEnumerable<int> id) {
-    //    try {
-    //        var entity = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id));
-
-    //        return Ok(entity);
-    //    }
-    //    catch (Exception ex) {
-    //        return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-    //            Status = StatusCodes.Status500InternalServerError,
-    //            Title = "An unexpected error occured.",
-    //            Detail = ex.Message
-    //        });
-    //    }
-    //}
 
     [HttpPost]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
@@ -112,17 +103,35 @@ public class BudgetsController : ControllerBase {
     [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
     public async Task<IActionResult> Create([FromQuery] int id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
-        var isCreated = await _mediator.Send(newEntity);
+        try {
+            var isCreated = await _mediator.Send(newEntity);
+            return Ok();
 
-        return Ok();
+        }
+        catch(Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
     }
 
     [HttpPut]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
     public async Task<IActionResult> Update([FromBody] BudgetUpdateCommand entity) {
-        var isUpdated = await _mediator.Send(entity);
+        try {
+            var isUpdated = await _mediator.Send(entity);
 
-        return Ok(entity);
+            return Ok();
+        }
+        catch(Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
     }
 
     [HttpDelete]

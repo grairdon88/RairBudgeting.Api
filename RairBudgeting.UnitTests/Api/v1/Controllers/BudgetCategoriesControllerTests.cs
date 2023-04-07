@@ -154,24 +154,42 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
 
     [TestMethod]
     public void Update_200() {
-        //var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
-        //var requestDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
-        //var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
+        var requestDTO = Builder<BudgetCategoryUpdateCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
         //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().GetById(requestDTO.Id)).ReturnsAsync(entities);
         //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Update(entities)).Returns(Task.CompletedTask);
         //_unitOfWorkMock.Setup(mock => mock.CompleteAsync()).ReturnsAsync(1);
-        //SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.DTOs.BudgetCategory>(entities, requestDTO);
-        //SetupMapper<RairBudgeting.Api.v1.DTOs.BudgetCategory, IBudgetCategory>(returnDTO, entities);
+        
+        SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.DTOs.Commands.BudgetCategoryUpdateCommand>(entities, requestDTO);
+        SetupMapper<RairBudgeting.Api.v1.DTOs.BudgetCategory, IBudgetCategory>(returnDTO, entities);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
 
-        //var results = _controller.Update(requestDTO);
+        var results = _controller.Update(requestDTO);
 
-        //Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
-        //var httpResult = results.Result as OkObjectResult;
+        Assert.IsInstanceOfType(results.Result, typeof(OkResult));
+        var httpResult = results.Result as OkResult;
 
         //Assert.IsInstanceOfType(httpResult.Value, typeof(RairBudgeting.Api.v1.DTOs.BudgetCategory));
         //var dto = httpResult.Value as RairBudgeting.Api.v1.DTOs.BudgetCategory;
         //Assert.IsNotNull(dto);
         //Assert.AreEqual(entities.Id, dto.Id);
+
+    }
+
+    [TestMethod]
+    public void Update_500() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
+        var requestDTO = Builder<BudgetCategoryUpdateCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
+        SetupMapper<IBudgetCategory, BudgetCategoryUpdateCommand>(entities, requestDTO);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ThrowsAsync(new ArgumentException("An error occured."));
+
+        var results = _controller.Update(requestDTO);
+
+        var actionResult = results.Result as ObjectResult;
+        Assert.IsNotNull(actionResult);
+        Assert.AreEqual(500, actionResult.StatusCode);
 
     }
 
@@ -186,22 +204,6 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
         //var results = _controller.Update(requestDTO);
 
         //Assert.IsInstanceOfType(results.Result, typeof(NotFoundResult));
-
-    }
-
-    [TestMethod]
-    public void Update_500() {
-        //var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
-        //var requestDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
-        //var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Update(entities)).ThrowsAsync(new ArgumentException("An error occured."));
-        //SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.DTOs.BudgetCategory>(entities, requestDTO);
-
-        //var results = _controller.Update(requestDTO);
-
-        //var actionResult = results.Result as ObjectResult;
-        //Assert.IsNotNull(actionResult);
-        //Assert.AreEqual(500, actionResult.StatusCode);
 
     }
 
