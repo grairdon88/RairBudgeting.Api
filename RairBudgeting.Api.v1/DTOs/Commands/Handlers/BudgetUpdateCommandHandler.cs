@@ -25,6 +25,7 @@ public class BudgetUpdateCommandHandler : IRequestHandler<BudgetUpdateCommand, b
         var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.Id);
 
         entity.BudgetTime = request.BudgetTime;
+        entity.Amount = request.Amount;
 
         await _unitOfWork.Repository<Domain.Entities.Budget>().Update(entity);
 
