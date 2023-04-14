@@ -10,6 +10,7 @@ public class AddBudgetLineToBudgetCommand : IRequest<bool> {
     public int Id { get; set; }
     public string Name { get; set; }
     public int BudgetCategoryId { get; set; }
+    public decimal Amount { get; set; }
     public bool IsDeleted { get; set; }
     public int BudgetId { get; set; }
 }
