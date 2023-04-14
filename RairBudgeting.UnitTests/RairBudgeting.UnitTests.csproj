@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain\**" />
+    <EmbeddedResource Remove="Domain\**" />
+    <None Remove="Domain\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -32,10 +38,6 @@
     <ProjectReference Include="..\RairBudgeting.Api.Infrastructure.Interfaces\RairBudgeting.Api.Infrastructure.Interfaces.csproj" />
     <ProjectReference Include="..\RairBudgeting.Api.Infrastructure\RairBudgeting.Api.Infrastructure.csproj" />
     <ProjectReference Include="..\RairBudgeting.Api.v1\RairBudgeting.Api.v1.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Domain\" />
   </ItemGroup>
 
 </Project>
