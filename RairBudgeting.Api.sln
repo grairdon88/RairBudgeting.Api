@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2B8B00D2-B117-45A2-AD6A-BD652D53BF6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RairBudgeting.UnitTests", "RairBudgeting.UnitTests\RairBudgeting.UnitTests.csproj", "{A82996D4-2D40-4578-B190-E428345831C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RairBudgeting.UnitTests", "RairBudgeting.UnitTests\RairBudgeting.UnitTests.csproj", "{A82996D4-2D40-4578-B190-E428345831C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RairBudgeting.IntegrationTests", "RairBudgeting.IntegrationTests\RairBudgeting.IntegrationTests.csproj", "{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{A82996D4-2D40-4578-B190-E428345831C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A82996D4-2D40-4578-B190-E428345831C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A82996D4-2D40-4578-B190-E428345831C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,6 +77,7 @@ Global
 		{ED2D66D0-2E51-4E59-8C10-46141B8BDAE9} = {03CD32E4-997D-4FFD-B676-9F1747962C86}
 		{FAF80EBF-3C35-4E6F-91DD-50DFA05AAD70} = {71C1FC36-A8BF-4A7F-AF3B-D11878A8D1AD}
 		{A82996D4-2D40-4578-B190-E428345831C0} = {2B8B00D2-B117-45A2-AD6A-BD652D53BF6F}
+		{7E88CFAE-EA34-49AF-80D9-CBD21404EC2B} = {2B8B00D2-B117-45A2-AD6A-BD652D53BF6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A038CFB2-5B19-45E5-B5B8-6D6016A1FDBE}

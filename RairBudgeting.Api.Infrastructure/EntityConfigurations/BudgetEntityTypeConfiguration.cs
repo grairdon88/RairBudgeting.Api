@@ -36,8 +36,8 @@ public class BudgetEntityTypeConfiguration : IEntityTypeConfiguration<Budget> {
 
         //.HasForeignKey("BudgetId");
 
-        builder.HasMany(b => b.Lines)
-            .WithOne(b => b.Budget)
-            .HasForeignKey(b => b.BudgetId);
+        //builder.HasMany(b => b.Lines)
+        //    .WithOne(b => b.Budget)
+        //    .HasForeignKey(b => b.BudgetId);
     }
 }

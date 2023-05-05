@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using RairBudgeting.Api.Domain.Entities;
+using RairBudgeting.Api.Domain.Interfaces;
+using RairBudgeting.Api.Domain.Interfaces.Entities;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,16 +23,21 @@ public class AddBudgetLineToBudgetCommandHandler : IRequestHandler<AddBudgetLine
     }
 
     public async Task<bool> Handle(AddBudgetLineToBudgetCommand request, CancellationToken cancellationToken) {
-        var entityObject = _mapper.Map<Domain.Entities.BudgetLine>(request);
-        var budgetCategory = await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().GetById(request.BudgetCategoryId);
-        entityObject.BudgetCategory = budgetCategory;
+        var newBudgetLine = _mapper.Map<Domain.Entities.BudgetLine>(request);
+        var budget = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.BudgetId);
+
+        if (budget.Lines == null)
+            budget.Lines = new List<Domain.Entities.BudgetLine>();
+
+        budget.Lines.Add(newBudgetLine);
+        await _unitOfWork.Repository<Domain.Entities.Budget>().UpdateEntry(budget);
 
         //var budget = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.BudgetId);
         //if (budget != null) {
         //    budget.Lines.
         //}
 
-        var createdEntity = await _unitOfWork.Repository<Domain.Entities.BudgetLine>().CreateEntry(entityObject);
+        //var createdEntity = await _unitOfWork.Repository<Domain.Entities.BudgetLine>().CreateEntry(entityObject);
 
         return true;
 

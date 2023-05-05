@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.v1.DTOs.Commands;
 public class BudgetCategoryAddCommand : IRequest<BudgetCategory> {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public bool IsDeleted { get; set; } = false;

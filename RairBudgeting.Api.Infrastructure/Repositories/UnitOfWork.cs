@@ -1,4 +1,5 @@
-﻿using RairBudgeting.Api.Domain;
+﻿using Microsoft.Azure.Cosmos;
+using RairBudgeting.Api.Domain;
 using RairBudgeting.Api.Domain.Interfaces;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
@@ -11,18 +12,19 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.Infrastructure.Repositories;
 public class UnitOfWork : IUnitOfWork {
-    private readonly BudgetContext _context;
+    //private readonly BudgetContext _context;
     private Hashtable _repositories;
+    private CosmosClient _cosmosClient;
+    private Database _database;
 
-    public UnitOfWork(BudgetContext context) {
-        _context = context;  
+    public UnitOfWork(CosmosClient cosmosClient) {
+        _cosmosClient = cosmosClient;
+        _database = _cosmosClient.CreateDatabaseIfNotExistsAsync("RairBudgeting").Result;
     }
-    public async Task<int> CompleteAsync() {
-        return await _context.SaveChangesAsync();
-    }
+    //public async Task<int> CompleteAsync() {
+    //}
 
-    public async ValueTask DisposeAsync() { 
-        await _context.DisposeAsync();
+    public async ValueTask DisposeAsync() {
     }
 
     public IRepository<TEntity> Repository<TEntity>() where TEntity : IEntity {
@@ -34,8 +36,9 @@ public class UnitOfWork : IUnitOfWork {
 
         if (!_repositories.ContainsKey(type)) {
             var repositoryType = typeof(Repository<>);
+            var container = _database.CreateContainerIfNotExistsAsync(type, "/partitionKey").Result.Container;
 
-            var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
+            var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), container);
 
             _repositories.Add(type, repositoryInstance);
         }

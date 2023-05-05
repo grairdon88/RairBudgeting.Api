@@ -3,8 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RairBudgeting.Api.Domain.Entities;
-using RairBudgeting.Api.Domain.Specifications;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 using RairBudgeting.Api.v1.DTOs.Commands;
 using Swashbuckle.AspNetCore.Annotations;
@@ -27,10 +25,10 @@ public class BudgetsController : ControllerBase {
 
     [HttpGet]
     [Route("list")]
-    public async Task<IActionResult> List() {
+    public async Task<IActionResult> List(bool includeDeleted = false) {
         try {
-            var entities = await _unitOfWork.Repository<Budget>().List();
-            var filteredEntities = entities.Where(e => e.IsDeleted == false);
+            var entities = await _unitOfWork.Repository<Domain.Entities.Budget>().List();
+            var filteredEntities = entities.Where(e => e.IsDeleted == false || includeDeleted == true);
 
             return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(filteredEntities));
         }
@@ -43,35 +41,14 @@ public class BudgetsController : ControllerBase {
         }
     }
 
-    //[HttpGet]
-    //[Route("matches")]
-
-    //public async Task<IActionResult> Find([FromQuery] int id) {
-    //    try {
-    //        var entity = await _unitOfWork.Repository<Budget>().Find();
-
-    //        return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entity));
-    //    }
-    //    catch (Exception ex) {
-    //        return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-    //            Status = StatusCodes.Status500InternalServerError,
-    //            Title = "An unexpected error occured.",
-    //            Detail = ex.Message
-    //        });
-    //    }
-    //}
-
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int id, [FromQuery] IEnumerable<string> includedEntities) {
+    public async Task<IActionResult> Get([FromQuery] Guid id) {
         try {
-            var entities = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id, includedEntities));
-            
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
 
-            if(entities == null || entities.Count() == 0) {
+            if(entity == null)
                 return NotFound();
-            }
-            var entity = entities.FirstOrDefault();
-
+            
             return Ok(_mapper.Map<DTOs.Budget>(entity));
         }
         catch (Exception ex) {
@@ -102,11 +79,47 @@ public class BudgetsController : ControllerBase {
     [HttpPost]
     [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Create([FromQuery] int id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
+    public async Task<IActionResult> CreateBudgetLine([FromQuery] Guid id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
         try {
             var isCreated = await _mediator.Send(newEntity);
             return Ok();
 
+        }
+        catch(Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
+    }
+
+    // Controller endpont to update a budget line.
+    [HttpPut]
+    [Route("{budgetId}/BudgetLines")]
+    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
+    public async Task<IActionResult> UpdateBudgetLine([FromQuery] Guid budgetId, [FromBody] UpdateBudgetLineInBudgetCommand updatedEntity) {
+        try {
+            var isUpdated = await _mediator.Send(updatedEntity);
+            return Ok();
+        }
+        catch(Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
+    }
+    // Controller endpoint to delete a budget line.
+
+    [HttpDelete]
+    [Route("{budgetId}/BudgetLines")]
+    public async Task<IActionResult> DeleteBudgetLineFromBudget([FromRoute] Guid budgetId, [FromQuery] Guid budgetLineId) {
+        try {
+            var deleteCommand = new DeleteBudgetLineFromBudgetCommand(budgetId, budgetLineId);
+            var isDeleted = await _mediator.Send(deleteCommand);
+            return Ok();
         }
         catch(Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
@@ -136,7 +149,7 @@ public class BudgetsController : ControllerBase {
 
     [HttpDelete]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Delete([FromQuery] int id) {
+    public async Task<IActionResult> Delete([FromQuery] Guid id) {
         try {
             var deleteCommand = new BudgetDeleteCommand(id);
             var isDeleted = await _mediator.Send(deleteCommand);

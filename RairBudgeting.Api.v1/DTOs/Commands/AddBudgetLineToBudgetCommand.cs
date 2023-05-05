@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.v1.DTOs.Commands;
 public class AddBudgetLineToBudgetCommand : IRequest<bool> {
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; }
-    public int BudgetCategoryId { get; set; }
+    public Guid BudgetCategoryId { get; set; }
     public decimal Amount { get; set; }
     public bool IsDeleted { get; set; }
-    public int BudgetId { get; set; }
+    public Guid BudgetId { get; set; }
 }

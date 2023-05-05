@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.v1.DTOs;
 public class Budget {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public DateTime BudgetTime { get; set; }
     public IEnumerable<BudgetLine> Lines { get; set; }
     public decimal Amount { get; set; }

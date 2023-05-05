@@ -6,11 +6,11 @@ public class BudgetWithLinesSpecification : BaseSpecification<Budget> {
         AddInclude(x => x.Lines);
     }
 
-    public BudgetWithLinesSpecification(int id) : base(x => x.Id == id) {
+    public BudgetWithLinesSpecification(Guid id) : base(x => x.Id == id) {
         AddInclude(x => x.Lines);
     }
 
-    public BudgetWithLinesSpecification(int id, IEnumerable<string> includedEntities) : base(x => x.Id == id) {
+    public BudgetWithLinesSpecification(Guid id, IEnumerable<string> includedEntities) : base(x => x.Id == id) {
         foreach (var includedEntity in includedEntities) {
             AddInclude($"{includedEntity}");
         }

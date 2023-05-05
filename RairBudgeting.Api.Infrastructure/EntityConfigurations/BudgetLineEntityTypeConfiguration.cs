@@ -33,18 +33,18 @@ public class BudgetLineEntityTypeConfiguration : IEntityTypeConfiguration<Budget
 
         // builder.Property<int>("BudgetForeignKey");
 
-        var navigation = builder.Metadata.FindNavigation(nameof(BudgetLine.BudgetCategory));
+        //var navigation = builder.Metadata.FindNavigation(nameof(BudgetLine.BudgetCategory));
 
-        // DDD Patterns comment:
-        //Set as field (New since EF 1.1) to access the OrderItem collection property through its field
-        navigation.SetPropertyAccessMode(PropertyAccessMode.Property);
+        //// DDD Patterns comment:
+        ////Set as field (New since EF 1.1) to access the OrderItem collection property through its field
+        //navigation.SetPropertyAccessMode(PropertyAccessMode.Property);
 
-        //builder.HasOne<Budget>()
-        //.WithMany();
+        ////builder.HasOne<Budget>()
+        ////.WithMany();
 
-        builder.HasOne(o => o.BudgetCategory)
-            .WithMany()
-            .HasForeignKey("BudgetCategoryId")
-            .IsRequired(true);
+        //builder.HasOne(o => o.BudgetCategory)
+        //    .WithMany()
+        //    .HasForeignKey("BudgetCategoryId")
+        //    .IsRequired(true);
     }
 }
