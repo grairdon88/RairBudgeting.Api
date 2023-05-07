@@ -10,5 +10,5 @@ using System.Threading.Tasks;
 namespace RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 public interface IUnitOfWork : IAsyncDisposable {
     IRepository<TEntity> Repository<TEntity>() where TEntity : IEntity;
-    Task<int> CompleteAsync();
+    //Task<int> CompleteAsync();
 }

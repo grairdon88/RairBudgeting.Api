@@ -21,11 +21,12 @@ public class BudgetCategoryUpdateCommandHandler : IRequestHandler<BudgetCategory
     public async Task<bool> Handle(BudgetCategoryUpdateCommand request, CancellationToken cancellationToken) {
         var entity = await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().GetById(request.Id);
 
+        //entity.PartitionKey = entity.Id.ToString();
         entity.Name = request.Name;
         entity.Description = request.Description;
 
-        await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().Update(_mapper.Map<Domain.Entities.BudgetCategory>(request));
-        await _unitOfWork.CompleteAsync();
+        await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().Update(entity);
+        //await _unitOfWork.CompleteAsync();
         return true;
     }
 }

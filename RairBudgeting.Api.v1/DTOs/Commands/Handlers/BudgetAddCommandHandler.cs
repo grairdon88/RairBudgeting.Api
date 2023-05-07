@@ -18,6 +18,7 @@ public class BudgetAddCommandHandler : IRequestHandler<BudgetAddCommand, Budget>
         _mapper = mapper;
     }
     public async Task<Budget> Handle(BudgetAddCommand request, CancellationToken cancellationToken) {
+        request.Id = Guid.NewGuid();
         var entityObject = _mapper.Map<Domain.Entities.Budget>(request);
         var createdEntity = await _unitOfWork.Repository<Domain.Entities.Budget>().CreateEntry(entityObject);
         return _mapper.Map<Budget>(createdEntity);

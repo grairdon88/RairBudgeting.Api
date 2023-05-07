@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RairBudgeting.Api.Domain.Interfaces\RairBudgeting.Api.Domain.Interfaces.csproj" />
   </ItemGroup>
 

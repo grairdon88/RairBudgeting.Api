@@ -10,8 +10,8 @@ public class BudgetCategoryDeleteCommand : IRequest<bool> {
     public BudgetCategoryDeleteCommand() {
     }
 
-    public BudgetCategoryDeleteCommand(int id) {
+    public BudgetCategoryDeleteCommand(Guid id) {
         BudgetCategoryId = id;
     }
-    public int BudgetCategoryId { get; set; }
+    public Guid BudgetCategoryId { get; set; }
 }

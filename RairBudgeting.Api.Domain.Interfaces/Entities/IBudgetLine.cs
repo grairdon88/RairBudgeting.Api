@@ -8,9 +8,9 @@ namespace RairBudgeting.Api.Domain.Interfaces.Entities;
 public interface IBudgetLine : IEntity {
     string Name { get; set; }
 
-    IBudgetCategory BudgetCategory { get; set; }
+    Guid BudgetCategoryId { get; set; }
     decimal Amount { get; set; }
 
     bool IsDeleted { get; set; }
-
+    Guid BudgetId { get; set; }
 }

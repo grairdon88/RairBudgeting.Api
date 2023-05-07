@@ -18,6 +18,7 @@ public class BudgetCategoryAddCommandHandler : IRequestHandler<BudgetCategoryAdd
     }
     public async Task<BudgetCategory> Handle(BudgetCategoryAddCommand request, CancellationToken cancellationToken) {
         var entityObject = _mapper.Map<Domain.Entities.BudgetCategory>(request);
+        //entityObject.PartitionKey = entityObject.Id.ToString();
         var createdEntity = await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().CreateEntry(entityObject);
         return _mapper.Map<BudgetCategory>(createdEntity);
     }

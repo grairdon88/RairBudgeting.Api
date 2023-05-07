@@ -1,12 +1,13 @@
 using MediatR;
+using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using RairBudgeting.Api.Domain;
 using RairBudgeting.Api.Domain.Entities;
 using RairBudgeting.Api.Domain.Interfaces;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
 using RairBudgeting.Api.Infrastructure;
-using RairBudgeting.Api.Infrastructure.Data;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
@@ -16,23 +17,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-//builder.Services.AddScoped<IFactory<IBudget>>(context => new Factory<IBudget>(() => new Budget()));
-//builder.Services.AddScoped<IFactory<IBudgetCategory>>(context => new Factory<IBudgetCategory>(() => new BudgetCategory()));
-//builder.Services.AddScoped<IFactory<IPayment>>(context => new Factory<IPayment>(() => new Payment()));
-//builder.Services.AddScoped<IFactory<INote>>(context => new Factory<INote>(() => new Note()));
 builder.Services.AddScoped<IBudget, Budget>();
 builder.Services.AddScoped<IBudgetCategory, BudgetCategory>();
 builder.Services.AddScoped<INote, Note>();
 builder.Services.AddScoped<IPayment, Payment>();
-builder.Services.AddScoped<IEntity, Entity>();
-//builder.Services.AddScoped<IRepository<IEntity>, Repository<Entity>>();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
-builder.Services.AddDbContext<BudgetContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b=> b.MigrationsAssembly("RairBudgeting.Api.Infrastructure"));
+builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<CosmosClient>(serviceProvider => {
+    return new CosmosClient(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAutoMapper(typeof(RairBudgeting.Api.v1.DTOs.MapProfile));
@@ -45,10 +40,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope()) {
-    var context = scope.ServiceProvider.GetRequiredService<BudgetContext>();
-    DBInitializer.Init(context);
-}
+//using (var scope = app.Services.CreateScope()) {
+//    var context = scope.ServiceProvider.GetRequiredService<BudgetContext>();
+//    DBInitializer.Init(context);
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
@@ -63,3 +58,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program {
+
+}
