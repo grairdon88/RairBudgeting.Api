@@ -41,8 +41,8 @@ public class BudgetsController : ControllerBase {
         }
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid id) {
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get([FromRoute] Guid id) {
         try {
             var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
 
@@ -76,11 +76,37 @@ public class BudgetsController : ControllerBase {
         }
     }
 
+    [HttpPost("{id}/clone")]
+    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
+    public async Task<IActionResult> CloneBudget([FromRoute] Guid id, BudgetCloneCommand budgetCloneCommand) {
+        try {
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
+
+            if (entity == null)
+                return NotFound();
+
+            var createdEntity = await _mediator.Send(budgetCloneCommand);
+            return Ok(createdEntity);
+        }
+        catch (Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
+    }
+
     [HttpPost]
     [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
     public async Task<IActionResult> CreateBudgetLine([FromQuery] Guid id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
         try {
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
+
+            if (entity == null)
+                return NotFound();
+
             var isCreated = await _mediator.Send(newEntity);
             return Ok();
 
@@ -96,10 +122,15 @@ public class BudgetsController : ControllerBase {
 
     // Controller endpont to update a budget line.
     [HttpPut]
-    [Route("{budgetId}/BudgetLines")]
+    [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> UpdateBudgetLine([FromQuery] Guid budgetId, [FromBody] UpdateBudgetLineInBudgetCommand updatedEntity) {
+    public async Task<IActionResult> UpdateBudgetLine([FromQuery] Guid id, [FromBody] UpdateBudgetLineInBudgetCommand updatedEntity) {
         try {
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
+
+            if (entity == null)
+                return NotFound();
+
             var isUpdated = await _mediator.Send(updatedEntity);
             return Ok();
         }
@@ -114,10 +145,10 @@ public class BudgetsController : ControllerBase {
     // Controller endpoint to delete a budget line.
 
     [HttpDelete]
-    [Route("{budgetId}/BudgetLines")]
-    public async Task<IActionResult> DeleteBudgetLineFromBudget([FromRoute] Guid budgetId, [FromQuery] Guid budgetLineId) {
+    [Route("{id}/BudgetLines")]
+    public async Task<IActionResult> DeleteBudgetLineFromBudget([FromRoute] Guid id, [FromQuery] Guid budgetLineId) {
         try {
-            var deleteCommand = new DeleteBudgetLineFromBudgetCommand(budgetId, budgetLineId);
+            var deleteCommand = new DeleteBudgetLineFromBudgetCommand(id, budgetLineId);
             var isDeleted = await _mediator.Send(deleteCommand);
             return Ok();
         }
@@ -130,11 +161,16 @@ public class BudgetsController : ControllerBase {
         }
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Update([FromBody] BudgetUpdateCommand entity) {
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] BudgetUpdateCommand budgetUpdateCommand) {
         try {
-            var isUpdated = await _mediator.Send(entity);
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
+
+            if (entity == null)
+                return NotFound();
+
+            var isUpdated = await _mediator.Send(budgetUpdateCommand);
 
             return Ok();
         }

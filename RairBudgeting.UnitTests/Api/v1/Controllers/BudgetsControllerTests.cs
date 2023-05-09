@@ -8,11 +8,6 @@ using RairBudgeting.Api.Domain.Specifications;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 using RairBudgeting.Api.v1.Controllers;
 using RairBudgeting.Api.v1.DTOs.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RairBudgeting.UnitTests.Api.v1.Controllers;
 [TestClass]
@@ -99,6 +94,7 @@ public class BudgetsControllerTests : UnitTestBase {
         var requestDTO = Builder<AddBudgetLineToBudgetCommand>.CreateNew().Build();
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
         _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync(entities);
 
         var results = _controller.CreateBudgetLine(requestDTO.BudgetId, requestDTO);
 
@@ -204,12 +200,12 @@ public class BudgetsControllerTests : UnitTestBase {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
         var requestDTO = Builder<BudgetUpdateCommand>.CreateNew().Build();
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
-
+        var id = Guid.NewGuid();
         SetupMapper<IBudget, RairBudgeting.Api.v1.DTOs.Commands.BudgetUpdateCommand>(entities, requestDTO);
         SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
         _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
-
-        var results = _controller.Update(requestDTO);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync(entities);
+        var results = _controller.Update(id, requestDTO);
 
         Assert.IsInstanceOfType(results.Result, typeof(OkResult));
         var httpResult = results.Result as OkResult;
@@ -217,14 +213,30 @@ public class BudgetsControllerTests : UnitTestBase {
     }
 
     [TestMethod]
+    public void Update_404() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<BudgetUpdateCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        var id = Guid.NewGuid();
+        SetupMapper<IBudget, BudgetUpdateCommand>(entities, requestDTO);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).Returns(Task.FromResult((RairBudgeting.Api.Domain.Entities.Budget)null));
+        var results = _controller.Update(id, requestDTO);
+        var actionResult = results.Result as NotFoundResult;
+        Assert.IsNotNull(actionResult);
+        Assert.AreEqual(404, actionResult.StatusCode);
+    }
+
+    [TestMethod]
     public void Update_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
         var requestDTO = Builder<BudgetUpdateCommand>.CreateNew().Build();
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        var id = Guid.NewGuid();
         SetupMapper<IBudget, BudgetUpdateCommand>(entities, requestDTO);
         _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ThrowsAsync(new ArgumentException("An error occured."));
 
-        var results = _controller.Update(requestDTO);
+        var results = _controller.Update(id, requestDTO);
 
         var actionResult = results.Result as ObjectResult;
         Assert.IsNotNull(actionResult);
@@ -240,13 +252,29 @@ public class BudgetsControllerTests : UnitTestBase {
 
         SetupMapper<IBudget, AddBudgetLineToBudgetCommand>(entities, requestDTO);
         SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
-
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync(entities);
         _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
 
         var results = _controller.CreateBudgetLine(requestDTO.BudgetId, requestDTO);
 
         Assert.IsInstanceOfType(results.Result, typeof(OkResult));
         var httpResult = results.Result as OkResult;
+    }
+
+    [TestMethod]
+    public void Test_AddBudgetLineToBudgetCommand_404() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<AddBudgetLineToBudgetCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        var id = Guid.NewGuid();
+        SetupMapper<IBudget, AddBudgetLineToBudgetCommand>(entities, requestDTO);
+        SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync((RairBudgeting.Api.Domain.Entities.Budget)null);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
+        var results = _controller.CreateBudgetLine(id, requestDTO);
+        var actionResult = results.Result as NotFoundResult;
+        Assert.IsNotNull(actionResult);
+        Assert.AreEqual(404, actionResult.StatusCode);
     }
 
     [TestMethod]
@@ -297,11 +325,29 @@ public class BudgetsControllerTests : UnitTestBase {
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
         SetupMapper<IBudget, UpdateBudgetLineInBudgetCommand>(entities, requestDTO);
         SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync(entities);
         _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
         var results = _controller.UpdateBudgetLine(entities.Id, requestDTO);
         Assert.IsInstanceOfType(results.Result, typeof(OkResult));
         var httpResult = results.Result as OkResult;
     }
+
+    [TestMethod]
+    public void Test_UpdateBudgetLineInBudgetCommand_404() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<UpdateBudgetLineInBudgetCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        var id = Guid.NewGuid();
+        SetupMapper<IBudget, UpdateBudgetLineInBudgetCommand>(entities, requestDTO);
+        SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync((RairBudgeting.Api.Domain.Entities.Budget)null);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(true);
+        var results = _controller.UpdateBudgetLine(id, requestDTO);
+        var actionResult = results.Result as NotFoundResult;
+        Assert.IsNotNull(actionResult);
+        Assert.AreEqual(404, actionResult.StatusCode);
+    }
+
     [TestMethod]
     public void Test_UpdateBudgetLineInBudgetCommand_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
@@ -315,4 +361,46 @@ public class BudgetsControllerTests : UnitTestBase {
         Assert.IsNotNull(actionResult);
         Assert.AreEqual(500, actionResult.StatusCode);
     }
+
+    [TestMethod]
+    public void Test_BudgetCloneCommand_200() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<BudgetCloneCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync(entities);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(returnDTO);
+         var results = _controller.CloneBudget(entities.Id, requestDTO);
+
+        Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
+        var httpResult = results.Result as OkObjectResult;
+    }
+
+    [TestMethod]
+    public void Test_BudgetCloneCommand_404() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<BudgetCloneCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().GetById(It.IsAny<Guid>())).ReturnsAsync((RairBudgeting.Api.Domain.Entities.Budget)null);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(returnDTO);
+        var results = _controller.CloneBudget(entities.Id, requestDTO);
+        var actionResult = results.Result as NotFoundResult;
+        Assert.AreEqual(404, actionResult.StatusCode);
+    }
+
+    [TestMethod]
+    public void Test_BudgetCloneCommand_500() {
+        var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
+        var requestDTO = Builder<BudgetCloneCommand>.CreateNew().Build();
+        var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateNew().Build();
+        SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ThrowsAsync(new ArgumentException("An error occured."));
+        var results = _controller.CloneBudget(entities.Id, requestDTO);
+        var actionResult = results.Result as ObjectResult;
+        Assert.IsNotNull(actionResult);
+        Assert.AreEqual(500, actionResult.StatusCode);
+    }
+
+
 }
