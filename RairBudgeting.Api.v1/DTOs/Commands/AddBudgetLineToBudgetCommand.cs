@@ -13,4 +13,5 @@ public class AddBudgetLineToBudgetCommand : IRequest<bool> {
     public decimal Amount { get; set; }
     public bool IsDeleted { get; set; }
     public Guid BudgetId { get; set; }
+    public decimal PaymentAmount { get; set; }
 }

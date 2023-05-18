@@ -6,6 +6,6 @@ public class BudgetLine : Entity, IBudgetLine {
     public Guid BudgetCategoryId { get; set; }
     public decimal Amount { get; set; }
     public bool IsDeleted { get; set; } = false;
-
     public Guid BudgetId { get; set; }
+    public decimal PaymentAmount { get; set; }
 }

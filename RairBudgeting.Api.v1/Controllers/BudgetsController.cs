@@ -124,7 +124,7 @@ public class BudgetsController : ControllerBase {
     [HttpPut]
     [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> UpdateBudgetLine([FromQuery] Guid id, [FromBody] UpdateBudgetLineInBudgetCommand updatedEntity) {
+    public async Task<IActionResult> UpdateBudgetLine([FromRoute] Guid id, [FromBody] UpdateBudgetLineInBudgetCommand updatedEntity) {
         try {
             var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
 
@@ -192,6 +192,28 @@ public class BudgetsController : ControllerBase {
             return Ok();
         }
         catch (Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
+    }
+
+    [HttpPut("{id}/budgetlines/paid")]
+    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
+    // controller action to mark multiple budget lines as paid.
+    public async Task<IActionResult> MarkBudgetLinesAsPaid([FromRoute] Guid id, [FromBody] MarkBudgetLinesAsPaidCommand markBudgetLinesAsPaidCommand) {
+        try {
+            var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
+
+            if (entity == null)
+                return NotFound();
+
+            var isUpdated = await _mediator.Send(markBudgetLinesAsPaidCommand);
+            return Ok();
+        }
+        catch(Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "An unexpected error occured.",

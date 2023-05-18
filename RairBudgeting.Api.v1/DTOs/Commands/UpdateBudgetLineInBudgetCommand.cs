@@ -8,4 +8,5 @@ public class UpdateBudgetLineInBudgetCommand : IRequest<bool> {
     public Guid BudgetCategoryId { get; set; }
     public decimal Amount { get; set; }
     public Guid BudgetId { get; set; }
+    public decimal PaymentAmount { get; set; }
 }

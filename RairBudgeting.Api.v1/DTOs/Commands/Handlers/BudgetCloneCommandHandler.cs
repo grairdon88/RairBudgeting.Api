@@ -30,7 +30,7 @@ public class BudgetCloneCommandHandler : IRequestHandler<BudgetCloneCommand, Bud
                 Amount = x.Amount,
                 BudgetCategoryId = x.BudgetCategoryId,
                 Name = x.Name,
-                BudgetId = newBudgetID
+                BudgetId = newBudgetID,
             }).ToList()
         };
         var createdEntity = await _unitOfWork.Repository<Domain.Entities.Budget>().CreateEntry(entityObject);
