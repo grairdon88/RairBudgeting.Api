@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using RairBudgeting.Api.Domain;
+using RairBudgeting.Api.Domain.Interfaces;
 using RairBudgeting.Api.Domain.Interfaces.Specifications;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 
@@ -32,6 +33,7 @@ public class Repository<T> : IRepository<T> where T : Entity {
     }
      
     public virtual async Task<T> GetById(Guid id) {
+        //var responseEntity = await _dbContainer.ReadItemAsync<dynamic>(id.ToString(), partitionKey: new PartitionKey(id.ToString()));
         ItemResponse<T> responseEntity = await _dbContainer.ReadItemAsync<T>(id.ToString(), partitionKey: new PartitionKey(id.ToString()));
 
         return responseEntity.Resource;

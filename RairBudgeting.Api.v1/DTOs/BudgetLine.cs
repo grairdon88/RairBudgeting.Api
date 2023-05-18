@@ -4,7 +4,7 @@ public class BudgetLine {
     public string Name { get; set; }
     public Guid BudgetCategoryId { get; set; }
     public decimal Amount { get; set; }
-    //public IEnumerable<Note> Notes { get; set; }
     public bool IsDeleted { get; set; }
     public Guid BudgetId { get; set; }
+    public decimal PaymentAmount { get; set; }
 }
