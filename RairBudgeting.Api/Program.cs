@@ -40,19 +40,28 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope()) {
-//    var context = scope.ServiceProvider.GetRequiredService<BudgetContext>();
-//    DBInitializer.Init(context);
-//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else {
+    if (!app.Environment.IsDevelopment()) {
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            options.RoutePrefix = string.Empty;
+        });
+    }
+}
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
