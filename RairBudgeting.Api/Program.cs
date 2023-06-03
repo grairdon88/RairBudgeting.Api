@@ -1,8 +1,10 @@
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using RairBudgeting.Api.Domain;
 using RairBudgeting.Api.Domain.Entities;
 using RairBudgeting.Api.Domain.Interfaces;
@@ -11,11 +13,24 @@ using RairBudgeting.Api.Infrastructure;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
+using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(new Action<JwtBearerOptions>(options => {
+        builder.Configuration.Bind("AzureAd", options);
+        options.Authority = "https://login.microsoftonline.com/f4ef51df-8ac0-43c4-890f-5bd447020b22/v2.0";
+        options.TokenValidationParameters.NameClaimType = "name";
+        options.IncludeErrorDetails = true;
+        //options.TokenValidationParameters.ValidateIssuer = false;
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.ValidateIssuerSigningKey = false;
+    }))
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"), "AzureAD");
 // Add services to the container.
 builder.Services.AddScoped<IBudget, Budget>();
 builder.Services.AddScoped<IBudgetCategory, BudgetCategory>();
@@ -62,6 +77,7 @@ else {
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

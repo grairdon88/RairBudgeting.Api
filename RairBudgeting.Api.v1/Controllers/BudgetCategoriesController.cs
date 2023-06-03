@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Web.Resource;
 using RairBudgeting.Api.Domain.Entities;
 using RairBudgeting.Api.Domain.Interfaces;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
@@ -15,6 +17,8 @@ using System.Collections.Generic;
 namespace RairBudgeting.Api.v1.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+//[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class BudgetCategoriesController : ControllerBase {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -32,6 +36,7 @@ public class BudgetCategoriesController : ControllerBase {
     [Route("list")]
     public async Task<IActionResult> List(bool includeDeleted = false) {
         try {
+            var subclaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub");
             var entities = await _unitOfWork.Repository<BudgetCategory>().List();
             var filteredEntities = entities.Where(e => e.IsDeleted == false || includeDeleted == true);
 
