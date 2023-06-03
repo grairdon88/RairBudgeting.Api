@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Web.Resource;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 using RairBudgeting.Api.v1.DTOs.Commands;
 using Swashbuckle.AspNetCore.Annotations;
@@ -10,6 +12,8 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace RairBudgeting.Api.v1.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
+//[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class BudgetsController : ControllerBase {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<BudgetsController> _logger;
