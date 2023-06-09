@@ -15,6 +15,8 @@ public class BudgetsControllerTests : UnitTestBase {
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ILogger<BudgetsController>> _loggerMock;
     private Mock<IMediator> _mediatorMock;
+    private static string validTestSubjectIdentifier = "12345";
+    private static string invalidTestSubjectIdentifier = string.Empty;
 
     private BudgetsController _controller;
 
@@ -31,10 +33,10 @@ public class BudgetsControllerTests : UnitTestBase {
     public void List_200() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List()).ReturnsAsync(entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List(validTestSubjectIdentifier)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.Budget>, IEnumerable<IBudget>>(dtos, entities);
 
-        var results = _controller.List();
+        var results = _controller.List(string.Empty);
 
         Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
     }
@@ -43,9 +45,9 @@ public class BudgetsControllerTests : UnitTestBase {
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List()).ThrowsAsync(new ArgumentException("An error occured."));
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List(invalidTestSubjectIdentifier)).ThrowsAsync(new ArgumentException("An error occured."));
 
-        var results = _controller.List();
+        var results = _controller.List(string.Empty);
 
         Assert.IsInstanceOfType(results.Result, typeof(ObjectResult));
 

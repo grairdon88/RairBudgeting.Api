@@ -39,9 +39,9 @@ public class Repository<T> : IRepository<T> where T : Entity {
         return responseEntity.Resource;
     }
 
-    public virtual async Task<IEnumerable<T>> List() {
+    public virtual async Task<IEnumerable<T>> List(string subjectIdentifier) {
         var entityItems = new List<T>();
-        var query = new QueryDefinition("SELECT DISTINCT * FROM c");
+        var query = new QueryDefinition($"SELECT DISTINCT * FROM c WHERE c.userId = \"{subjectIdentifier}\"");
 
         var resultSetIterator = _dbContainer.GetItemQueryIterator<T>(query);
 

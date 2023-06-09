@@ -26,7 +26,8 @@ public class NotesController : Controller {
     [Route("list")]
     public async Task<IActionResult> List(bool includeDeleted = false) {
         try {
-            var entities = await _unitOfWork.Repository<Domain.Entities.Note>().List();
+            var subjectIdentifier = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            var entities = await _unitOfWork.Repository<Domain.Entities.Note>().List(subjectIdentifier);
             var filteredEntities = entities.Where(e => e.IsDeleted == false || includeDeleted == true);
             return Ok(filteredEntities);
         }

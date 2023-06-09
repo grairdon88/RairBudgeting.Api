@@ -34,10 +34,9 @@ public class BudgetCategoriesController : ControllerBase {
 
     [HttpGet] 
     [Route("list")]
-    public async Task<IActionResult> List(bool includeDeleted = false) {
+    public async Task<IActionResult> List(string userId, bool includeDeleted = false) {
         try {
-            var subclaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "sub");
-            var entities = await _unitOfWork.Repository<BudgetCategory>().List();
+            var entities = await _unitOfWork.Repository<BudgetCategory>().List(userId);
             var filteredEntities = entities.Where(e => e.IsDeleted == false || includeDeleted == true);
 
             return Ok(_mapper.Map<IEnumerable<v1.DTOs.BudgetCategory>>(filteredEntities));
@@ -129,7 +128,7 @@ public class BudgetCategoriesController : ControllerBase {
         try {
             var deleteCommand = new BudgetCategoryDeleteCommand(id);
             var isDeleted = await _mediator.Send(deleteCommand);
-            return Ok();
+            return Ok(); 
         }
         catch (Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
