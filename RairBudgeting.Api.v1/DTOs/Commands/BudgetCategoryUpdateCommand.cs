@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace RairBudgeting.Api.v1.DTOs.Commands;
 public class BudgetCategoryUpdateCommand : IRequest<bool> {
     public Guid Id { get; set; }
+    public string UserId { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public bool IsDeleted { get; set; } = false;

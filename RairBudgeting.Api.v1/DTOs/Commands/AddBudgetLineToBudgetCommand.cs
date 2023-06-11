@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace RairBudgeting.Api.v1.DTOs.Commands;
 public class AddBudgetLineToBudgetCommand : IRequest<bool> {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public string UserId { get; set; }
     public string Name { get; set; }
     public Guid BudgetCategoryId { get; set; }
     public decimal Amount { get; set; }

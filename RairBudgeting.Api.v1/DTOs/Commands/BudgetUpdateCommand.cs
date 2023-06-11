@@ -4,6 +4,7 @@ namespace RairBudgeting.Api.v1.DTOs.Commands;
 
 public class BudgetUpdateCommand : IRequest<bool> {
     public Guid Id { get; set; }
+    public string UserId { get; set; }
     public DateTime BudgetTime { get; set; }
     public decimal Amount { get; set; }
 

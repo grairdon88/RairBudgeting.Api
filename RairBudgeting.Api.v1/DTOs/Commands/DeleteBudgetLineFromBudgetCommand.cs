@@ -12,4 +12,5 @@ public class DeleteBudgetLineFromBudgetCommand : IRequest<bool> {
 
     public Guid BudgetId { get; set; }
     public Guid BudgetLineId { get; set; }
+    public string UserId { get; set; }
 }

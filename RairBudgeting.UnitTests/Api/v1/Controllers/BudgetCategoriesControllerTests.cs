@@ -22,6 +22,8 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ILogger<BudgetCategoriesController>> _loggerMock;
     private Mock<IMediator> _mediatorMock;
+    private static string validTestSubjectIdentifier = "12345";
+    private static string invalidTestSubjectIdentifier = string.Empty;
 
     private BudgetCategoriesController _controller;
 
@@ -38,10 +40,10 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
     public void List_200() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().List()).ReturnsAsync(entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().List(validTestSubjectIdentifier)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.BudgetCategory>, IEnumerable<IBudgetCategory>>(dtos, entities);
 
-        var results = _controller.List();
+        var results = _controller.List(string.Empty);
 
         Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
 
@@ -51,9 +53,10 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().List()).ThrowsAsync(new ArgumentException("An error occured."));
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>()
+        .List(invalidTestSubjectIdentifier)).ThrowsAsync(new ArgumentException("An error occured."));
 
-        var results = _controller.List();
+        var results = _controller.List(string.Empty);
 
         Assert.IsInstanceOfType(results.Result, typeof(ObjectResult));
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 public interface IRepository<T> {
-    Task<IEnumerable<T>> List();
+    Task<IEnumerable<T>> List(string subjectIdentifier);
     Task<IEnumerable<T>> Find(ISpecification<T> specificaton = null);
     Task<T> GetById(Guid id);
     Task<T> Create(T entity);
