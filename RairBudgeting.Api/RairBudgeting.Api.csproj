@@ -29,8 +29,4 @@
     <ProjectReference Include="..\RairBudgeting.Api.v1\RairBudgeting.Api.v1.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
 </Project>
