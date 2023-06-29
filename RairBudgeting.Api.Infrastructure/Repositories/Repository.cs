@@ -11,11 +11,6 @@ public class Repository<T> : IRepository<T> where T : Entity {
     public Repository(Container dbContainer) {
         _dbContainer = dbContainer;
     }
-    
-    public virtual async Task<T> Create(T entity) {
-
-        return entity;
-    }
 
     public virtual async Task<T> CreateEntry(T entity) {
         ItemResponse<T> createResponse = await _dbContainer.CreateItemAsync(entity, new PartitionKey(entity.PartitionKey));
@@ -39,7 +34,7 @@ public class Repository<T> : IRepository<T> where T : Entity {
     }
 
     public virtual async Task<IEnumerable<T>> List(string subjectIdentifier) {
-        return _dbContainer.GetItemLinqQueryable<T>(true).Where(x => x.UserId == subjectIdentifier).AsEnumerable();
+        return await Task.Run(() => _dbContainer.GetItemLinqQueryable<T>(true).Where(x => x.UserId == subjectIdentifier).AsEnumerable());
     }
 
     public virtual async Task Update(T entity) {
