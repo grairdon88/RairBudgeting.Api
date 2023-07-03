@@ -19,7 +19,7 @@ public class UnitOfWork : IUnitOfWork {
 
     public UnitOfWork(CosmosClient cosmosClient) {
         _cosmosClient = cosmosClient;
-        _database = _cosmosClient.CreateDatabaseIfNotExistsAsync("RairBudgeting").Result;
+        //_database = _cosmosClient.CreateDatabaseIfNotExistsAsync("RairBudgeting").Result;
     }
     //public async Task<int> CompleteAsync() {
     //}
@@ -36,7 +36,7 @@ public class UnitOfWork : IUnitOfWork {
 
         if (!_repositories.ContainsKey(type)) {
             var repositoryType = typeof(Repository<>);
-            var container = _database.CreateContainerIfNotExistsAsync(type, "/partitionKey").Result.Container;
+            var container = _cosmosClient.GetContainer("RairBudgeting", type);
 
             var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), container);
 

@@ -9,6 +9,7 @@ using RairBudgeting.Api.Domain;
 using RairBudgeting.Api.Domain.Entities;
 using RairBudgeting.Api.Domain.Interfaces;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
+using RairBudgeting.Api.Helpers;
 using RairBudgeting.Api.Infrastructure;
 using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories;
@@ -39,9 +40,7 @@ builder.Services.AddScoped<IPayment, Payment>();
 
 
 builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<CosmosClient>(serviceProvider => {
-    return new CosmosClient(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddSingleton<CosmosClient>(CosmosDBInitializerHelpers.InitializeCosmosClientInstanceAsync(builder.Configuration).GetAwaiter().GetResult());
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -87,3 +86,4 @@ app.Run();
 public partial class Program {
 
 }
+

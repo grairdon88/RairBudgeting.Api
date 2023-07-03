@@ -11,11 +11,6 @@ public class Repository<T> : IRepository<T> where T : Entity {
     public Repository(Container dbContainer) {
         _dbContainer = dbContainer;
     }
-    
-    public virtual async Task<T> Create(T entity) {
-
-        return entity;
-    }
 
     public virtual async Task<T> CreateEntry(T entity) {
         ItemResponse<T> createResponse = await _dbContainer.CreateItemAsync(entity, new PartitionKey(entity.PartitionKey));
@@ -33,27 +28,13 @@ public class Repository<T> : IRepository<T> where T : Entity {
     }
      
     public virtual async Task<T> GetById(Guid id) {
-        //var responseEntity = await _dbContainer.ReadItemAsync<dynamic>(id.ToString(), partitionKey: new PartitionKey(id.ToString()));
         ItemResponse<T> responseEntity = await _dbContainer.ReadItemAsync<T>(id.ToString(), partitionKey: new PartitionKey(id.ToString()));
 
         return responseEntity.Resource;
     }
 
     public virtual async Task<IEnumerable<T>> List(string subjectIdentifier) {
-        var entityItems = new List<T>();
-        var query = new QueryDefinition($"SELECT DISTINCT * FROM c WHERE c.userId = \"{subjectIdentifier}\"");
-
-        var resultSetIterator = _dbContainer.GetItemQueryIterator<T>(query);
-
-        while (resultSetIterator.HasMoreResults) {
-            FeedResponse<T> response = await resultSetIterator.ReadNextAsync();
-            
-            foreach(var item in response) {
-                entityItems.Add(item);
-            }
-        }
-
-        return entityItems;
+        return await Task.Run(() => _dbContainer.GetItemLinqQueryable<T>(true).Where(x => x.UserId == subjectIdentifier).AsEnumerable());
     }
 
     public virtual async Task Update(T entity) {
@@ -67,7 +48,6 @@ public class Repository<T> : IRepository<T> where T : Entity {
     }
 
     private IQueryable<T> ApplySpecification(ISpecification<T> spec) {
-        //return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         throw new NotImplementedException();
     }
 }

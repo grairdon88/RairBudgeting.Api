@@ -67,8 +67,8 @@ public class BudgetCategoriesController : ControllerBase {
     //    }
     //}
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery]Guid id) {
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get([FromRoute]Guid id) {
         try {
             var entity = await _unitOfWork.Repository<BudgetCategory>().GetById(id);
 

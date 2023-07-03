@@ -104,7 +104,7 @@ public class BudgetsController : ControllerBase {
     [HttpPost]
     [Route("{id}/BudgetLines")]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> CreateBudgetLine([FromQuery] Guid id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
+    public async Task<IActionResult> CreateBudgetLine([FromRoute] Guid id, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
         try {
             var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(id);
 

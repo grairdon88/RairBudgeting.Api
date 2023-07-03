@@ -10,7 +10,6 @@ public interface IRepository<T> {
     Task<IEnumerable<T>> List(string subjectIdentifier);
     Task<IEnumerable<T>> Find(ISpecification<T> specificaton = null);
     Task<T> GetById(Guid id);
-    Task<T> Create(T entity);
     Task<T> CreateEntry(T entity);
     Task Update(T entity);
     Task<T> UpdateEntry(T entity);
