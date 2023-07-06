@@ -17,6 +17,7 @@ using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Cryptography.Pkcs;
 
 var builder = WebApplication.CreateBuilder(args);
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -40,8 +41,7 @@ builder.Services.AddScoped<IPayment, Payment>();
 
 
 builder.Services.AddSingleton<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<CosmosClient>(CosmosDBInitializerHelpers.InitializeCosmosClientInstanceAsync(builder.Configuration).GetAwaiter().GetResult());
-
+builder.Services.AddSingleton<CosmosClient>(await Task.Run(() => CosmosDBInitializerHelpers.InitializeCosmosClientInstanceAsync(builder.Configuration)));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAutoMapper(typeof(RairBudgeting.Api.v1.DTOs.MapProfile));

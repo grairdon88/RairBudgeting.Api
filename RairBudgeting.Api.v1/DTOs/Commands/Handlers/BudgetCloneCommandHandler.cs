@@ -23,9 +23,10 @@ public class BudgetCloneCommandHandler : IRequestHandler<BudgetCloneCommand, Bud
 
         var entityObject = new Domain.Entities.Budget {
             Id = newBudgetID,
+            UserId = entity.UserId,
             BudgetTime = request.BudgetTime,
             Amount = entity.Amount,
-            Lines = entity.Lines.Select(x => new Domain.Entities.BudgetLine {
+            Lines = entity.Lines?.Select(x => new Domain.Entities.BudgetLine {
                 Id = Guid.NewGuid(),
                 Amount = x.Amount,
                 BudgetCategoryId = x.BudgetCategoryId,
