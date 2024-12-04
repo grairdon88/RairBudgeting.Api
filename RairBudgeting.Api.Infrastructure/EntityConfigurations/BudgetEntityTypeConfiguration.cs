@@ -20,7 +20,10 @@ public class BudgetEntityTypeConfiguration : IEntityTypeConfiguration<Budget> {
         builder.Property(b => b.BudgetTime)
             //.UsePropertyAccessMode(PropertyAccessMode.Property)
             .IsRequired();
-
+        builder.Property(b => b.Amount)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
         builder.Property(b => b.IsDeleted)
             //.UsePropertyAccessMode(PropertyAccessMode.Property)
             .IsRequired();

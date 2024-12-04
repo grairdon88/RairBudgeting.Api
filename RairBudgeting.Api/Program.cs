@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RairBudgeting.Api.Domain;
@@ -37,7 +37,7 @@ builder.Services.AddDbContext<BudgetContext>(options => {
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAutoMapper(typeof(RairBudgeting.Api.v1.DTOs.MapProfile));
 var assembly = AppDomain.CurrentDomain.Load("RairBudgeting.Api.v1");
-builder.Services.AddMediatR(assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

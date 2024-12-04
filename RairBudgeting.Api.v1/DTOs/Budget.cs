@@ -10,6 +10,7 @@ public class Budget {
     public int Id { get; set; }
     public DateTime BudgetTime { get; set; }
     public IEnumerable<BudgetLine> Lines { get; set; }
+    public decimal Amount { get; set; }
 
     public bool IsDeleted { get; set; }
 }
