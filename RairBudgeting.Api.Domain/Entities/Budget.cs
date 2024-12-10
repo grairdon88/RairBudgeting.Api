@@ -5,7 +5,5 @@ namespace RairBudgeting.Api.Domain.Entities {
         public DateTime BudgetTime { get; set; }
         public IEnumerable<BudgetLine>? Lines { get; set; }
         public decimal Amount { get; set; } = decimal.Zero;
-
-        public bool IsDeleted { get; set; } = false;
     }
 }

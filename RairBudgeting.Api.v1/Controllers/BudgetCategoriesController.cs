@@ -3,11 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RairBudgeting.Api.Domain.Entities;
-using RairBudgeting.Api.Domain.Interfaces;
-using RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
-using RairBudgeting.Api.Infrastructure.Repositories;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
-using System.Collections.Generic;
 
 namespace RairBudgeting.Api.v1.Controllers;
 [Route("api/[controller]")]
@@ -25,9 +21,9 @@ public class BudgetCategoriesController : ControllerBase {
 
     [HttpGet]
     [Route("list")]
-    public async Task<IActionResult> List() {
+    public async Task<IActionResult> List([FromQuery] bool includeDeleted = false) {
         try {
-            var entities = await _unitOfWork.Repository<BudgetCategory>().List(); 
+            var entities = _unitOfWork.Repository<BudgetCategory>().Get(x => x.IsDeleted == false || includeDeleted == true);
 
             return Ok(_mapper.Map<IEnumerable<v1.DTOs.BudgetCategory>>(entities));
         }
@@ -111,6 +107,24 @@ public class BudgetCategoriesController : ControllerBase {
             return Ok(newEntity);
         }
         catch (Exception ex) {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "An unexpected error occured.",
+                Detail = ex.Message
+            });
+        }
+    }
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromQuery] List<int> id) {
+        try {
+
+            foreach (var entityID in id) {
+                await _unitOfWork.Repository<BudgetCategory>().DeleteById(entityID);
+            }
+            await _unitOfWork.CompleteAsync();
+            return Ok();
+        }
+        catch(Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "An unexpected error occured.",

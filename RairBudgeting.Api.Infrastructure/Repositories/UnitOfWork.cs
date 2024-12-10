@@ -23,6 +23,7 @@ public class UnitOfWork : IUnitOfWork {
 
     public async ValueTask DisposeAsync() { 
         await _context.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 
     public IRepository<TEntity> Repository<TEntity>() where TEntity : IEntity {

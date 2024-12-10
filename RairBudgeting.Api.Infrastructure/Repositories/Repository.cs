@@ -40,7 +40,14 @@ public class Repository<T> : IRepository<T> where T : Entity {
     }
 
     public virtual async Task DeleteById(int id) {
-        
+        var entity = await _dbSet.FindAsync(id);
+
+        if (entity != null) {
+            entity.IsDeleted = true;
+            _dbSet.Update(entity);
+
+            await _context.SaveChangesAsync();
+        }
     }
 
     public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
@@ -68,10 +75,6 @@ public class Repository<T> : IRepository<T> where T : Entity {
         var entity = await _dbSet.FindAsync(id);
 
         return entity;
-    }
-
-    public virtual async Task<IEnumerable<T>> List() {
-        return await _dbSet.ToListAsync();
     }
 
     public virtual async Task Update(T entity) {

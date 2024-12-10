@@ -25,7 +25,7 @@ public class BudgetEntityTypeConfiguration : IEntityTypeConfiguration<Budget> {
             .HasColumnType("decimal(18,2)")
             .IsRequired();
         builder.Property(b => b.IsDeleted)
-            //.UsePropertyAccessMode(PropertyAccessMode.Property)
+            .UsePropertyAccessMode(PropertyAccessMode.Property)
             .IsRequired();
 
         // DDD Patterns comment:

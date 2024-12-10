@@ -16,16 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-//builder.Services.AddScoped<IFactory<IBudget>>(context => new Factory<IBudget>(() => new Budget()));
-//builder.Services.AddScoped<IFactory<IBudgetCategory>>(context => new Factory<IBudgetCategory>(() => new BudgetCategory()));
-//builder.Services.AddScoped<IFactory<IPayment>>(context => new Factory<IPayment>(() => new Payment()));
-//builder.Services.AddScoped<IFactory<INote>>(context => new Factory<INote>(() => new Note()));
 builder.Services.AddScoped<IBudget, Budget>();
 builder.Services.AddScoped<IBudgetCategory, BudgetCategory>();
 builder.Services.AddScoped<INote, Note>();
 builder.Services.AddScoped<IPayment, Payment>();
 builder.Services.AddScoped<IEntity, Entity>();
-//builder.Services.AddScoped<IRepository<IEntity>, Repository<Entity>>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

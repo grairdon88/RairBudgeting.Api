@@ -35,7 +35,8 @@ public class BudgetsControllerTests : UnitTestBase {
     public void List_200() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List()).ReturnsAsync(entities);
+        var includeDeleted = false;
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, string.Empty)).Returns(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.Budget>, IEnumerable<IBudget>>(dtos, entities);
 
         var results = _controller.List();
@@ -47,7 +48,7 @@ public class BudgetsControllerTests : UnitTestBase {
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List()).ThrowsAsync(new ArgumentException("An error occured."));
+        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List(false)).ThrowsAsync(new ArgumentException("An error occured."));
 
         var results = _controller.List();
 

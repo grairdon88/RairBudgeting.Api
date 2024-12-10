@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace RairBudgeting.Api.Infrastructure.Interfaces.Repositories;
 public interface IRepository<T>
 {
-    Task<IEnumerable<T>> List();
     Task<IEnumerable<T>> Find(ISpecification<T> specificaton = null);
 
     IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,

@@ -27,9 +27,9 @@ public class BudgetsController : ControllerBase {
 
     [HttpGet]
     [Route("list")]
-    public async Task<IActionResult> List() {
+    public async Task<IActionResult> List(bool includeDeleted = false) {
         try {
-            var entities = await _unitOfWork.Repository<Budget>().List();
+            var entities = _unitOfWork.Repository<Budget>().Get(x => x.IsDeleted == false || includeDeleted == true);
             var filteredEntities = entities.Where(e => e.IsDeleted == false);
 
             return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(filteredEntities));
