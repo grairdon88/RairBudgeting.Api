@@ -28,4 +28,10 @@
     <ProjectReference Include="..\RairBudgeting.Api.v1\RairBudgeting.Api.v1.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

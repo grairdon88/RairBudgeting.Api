@@ -21,9 +21,9 @@ public class BudgetCategoriesController : ControllerBase {
 
     [HttpGet]
     [Route("list")]
-    public async Task<IActionResult> List([FromQuery] bool includeDeleted = false) {
+    public async Task<IActionResult> List([FromQuery] bool includeDeleted = false, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0) {
         try {
-            var entities = _unitOfWork.Repository<BudgetCategory>().Get(x => x.IsDeleted == false || includeDeleted == true);
+            var entities = await _unitOfWork.Repository<BudgetCategory>().Get(x => x.IsDeleted == false || includeDeleted == true, orderBy: null, pageSize, pageIndex);
 
             return Ok(_mapper.Map<IEnumerable<v1.DTOs.BudgetCategory>>(entities));
         }
@@ -35,23 +35,6 @@ public class BudgetCategoriesController : ControllerBase {
             });
         }
      }
-
-    //[HttpGet]
-    //[Route("matches")]
-    //public async Task<IActionResult> Find([FromBody] int id) {
-    //    try {
-    //        var entity = await _unitOfWork.Repository<BudgetCategory>().Find();
-
-    //        return Ok(entity);
-    //    }
-    //    catch (Exception ex) {
-    //        return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-    //            Status = StatusCodes.Status500InternalServerError,
-    //            Title = "An unexpected error occured.",
-    //            Detail = ex.Message
-    //        });
-    //    }
-    //}
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery]int id) {

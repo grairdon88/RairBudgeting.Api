@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
-using RairBudgeting.Api.v1.DTOs.Commands;
+using RairBudgeting.Api.v1.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
+using RairBudgeting.Api.v1.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.DTOs.Commands.Handlers;
+namespace RairBudgeting.Api.v1.Commands.Handlers;
 public class AddBudgetLineToBudgetCommandHandler : IRequestHandler<AddBudgetLineToBudgetCommand, bool> {
     private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;

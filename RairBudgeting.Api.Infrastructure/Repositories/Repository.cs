@@ -50,8 +50,8 @@ public class Repository<T> : IRepository<T> where T : Entity {
         }
     }
 
-    public IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+    public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int pageSize = 0, int pageIndex = 0,
         string includedProperties = "") {
         IQueryable<T> query = _dbSet;
 
@@ -64,10 +64,10 @@ public class Repository<T> : IRepository<T> where T : Entity {
         };
 
         if(orderBy != null) {
-            return orderBy(query).ToList();
+            return await orderBy(query).Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
         }
         else {
-            return query.ToList();
+            return await query.Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
         }
     }
 

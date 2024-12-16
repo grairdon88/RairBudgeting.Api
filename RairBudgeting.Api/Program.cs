@@ -26,7 +26,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 builder.Services.AddDbContext<BudgetContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b=> b.MigrationsAssembly("RairBudgeting.Api.Infrastructure"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("RairBudgeting.Api.Infrastructure"));
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

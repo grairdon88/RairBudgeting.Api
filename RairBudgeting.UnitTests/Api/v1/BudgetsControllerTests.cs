@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
+using RairBudgeting.Api.v1.Commands;
 using RairBudgeting.Api.v1.Controllers;
-using RairBudgeting.Api.v1.DTOs.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +36,7 @@ public class BudgetsControllerTests : UnitTestBase {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
         var includeDeleted = false;
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, string.Empty)).Returns(entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, 0, 0, string.Empty)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.Budget>, IEnumerable<IBudget>>(dtos, entities);
 
         var results = _controller.List();

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using RairBudgeting.Api.Domain.Entities;
 using RairBudgeting.Api.Domain.Specifications;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
-using RairBudgeting.Api.v1.DTOs.Commands;
+using RairBudgeting.Api.v1.Commands;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RairBudgeting.Api.v1.Controllers;
@@ -27,12 +27,11 @@ public class BudgetsController : ControllerBase {
 
     [HttpGet]
     [Route("list")]
-    public async Task<IActionResult> List(bool includeDeleted = false) {
+    public async Task<IActionResult> List(bool includeDeleted = false, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0) {
         try {
-            var entities = _unitOfWork.Repository<Budget>().Get(x => x.IsDeleted == false || includeDeleted == true);
-            var filteredEntities = entities.Where(e => e.IsDeleted == false);
+            var entities = await _unitOfWork.Repository<Budget>().Get(x => x.IsDeleted == false || includeDeleted == true, orderBy: null, pageSize, pageIndex);
 
-            return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(filteredEntities));
+            return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entities));
         }
         catch (Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
@@ -61,8 +60,8 @@ public class BudgetsController : ControllerBase {
         }
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int id, [FromQuery] IEnumerable<string> includedEntities) {
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] IEnumerable<string> includedEntities) {
         try {
             var entities = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id, includedEntities));
             var entity = entities.FirstOrDefault();
@@ -76,21 +75,6 @@ public class BudgetsController : ControllerBase {
             });
         }
     }
-
-    //public async Task<IActionResult> Get([FromQuery] IEnumerable<int> id) {
-    //    try {
-    //        var entity = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id));
-
-    //        return Ok(entity);
-    //    }
-    //    catch (Exception ex) {
-    //        return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-    //            Status = StatusCodes.Status500InternalServerError,
-    //            Title = "An unexpected error occured.",
-    //            Detail = ex.Message
-    //        });
-    //    }
-    //}
 
     [HttpPost]
     [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]

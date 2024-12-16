@@ -2,13 +2,14 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
+using RairBudgeting.Api.v1.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.DTOs.Commands.Handlers;
+namespace RairBudgeting.Api.v1.Commands.Handlers;
 public class BudgetDeleteCommandHandler : IRequestHandler<BudgetDeleteCommand, bool> {
     private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
@@ -29,7 +30,7 @@ public class BudgetDeleteCommandHandler : IRequestHandler<BudgetDeleteCommand, b
             await _unitOfWork.Repository<Domain.Entities.Budget>().Update(entityObject);
             return true;
         }
-        catch(Exception ex) {
+        catch (Exception ex) {
             _logger.Log(LogLevel.Error, ex, ex.Message);
             return false;
         }

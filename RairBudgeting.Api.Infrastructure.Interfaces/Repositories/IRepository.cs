@@ -11,8 +11,9 @@ public interface IRepository<T>
 {
     Task<IEnumerable<T>> Find(ISpecification<T> specificaton = null);
 
-    IEnumerable<T> Get(Expression<Func<T, bool>> filter = null,
+    Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+        int pageSize = 0, int pageIndex = 0,
         string includedProperties = "");
     Task<T> GetById(int id);
     Task<T> Create(T entity);

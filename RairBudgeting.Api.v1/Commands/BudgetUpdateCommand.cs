@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RairBudgeting.Api.v1.DTOs.Commands;
+namespace RairBudgeting.Api.v1.Commands;
 
 public class BudgetUpdateCommand : IRequest<bool> {
     public int Id { get; set; }

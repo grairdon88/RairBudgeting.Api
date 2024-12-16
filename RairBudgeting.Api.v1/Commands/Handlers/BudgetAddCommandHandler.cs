@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RairBudgeting.Api.Domain.Entities;
+using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.DTOs;
 
-namespace RairBudgeting.Api.v1.DTOs.Commands.Handlers;
+namespace RairBudgeting.Api.v1.Commands.Handlers;
 public class BudgetAddCommandHandler : IRequestHandler<BudgetAddCommand, Budget> {
     private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
