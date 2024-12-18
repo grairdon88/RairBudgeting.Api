@@ -36,19 +36,21 @@ public class BudgetsControllerTests : UnitTestBase {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
         var includeDeleted = false;
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, 0, 0, string.Empty)).ReturnsAsync(entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false || includeDeleted == true, null, 10, 0, string.Empty)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.Budget>, IEnumerable<IBudget>>(dtos, entities);
 
         var results = _controller.List();
 
-        Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(results.Result, typeof(ObjectResult));
+        var httpResults = results.Result as ObjectResult;
+        Assert.AreEqual(200, httpResults.StatusCode);
     }
 
     [TestMethod]
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().List(false)).ThrowsAsync(new ArgumentException("An error occured."));
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, 0, 0, string.Empty)).ThrowsAsync(new ArgumentException("An error occured."));
 
         var results = _controller.List();
 
@@ -71,10 +73,10 @@ public class BudgetsControllerTests : UnitTestBase {
         Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
         var httpResult = results.Result as OkObjectResult;
 
-        //Assert.IsInstanceOfType(httpResult.Value, typeof(RairBudgeting.Api.v1.DTOs.Budget));
-        //var dto = httpResult.Value as RairBudgeting.Api.v1.DTOs.Budget;
-        //Assert.IsNotNull(dto);
-        //Assert.AreEqual(entities.Id, dto.Id);
+        Assert.IsInstanceOfType(httpResult.Value, typeof(RairBudgeting.Api.v1.DTOs.Budget));
+        var dto = httpResult.Value as RairBudgeting.Api.v1.DTOs.Budget;
+        Assert.IsNotNull(dto);
+        Assert.AreEqual(entities.Id, dto.Id);
 
     }
 

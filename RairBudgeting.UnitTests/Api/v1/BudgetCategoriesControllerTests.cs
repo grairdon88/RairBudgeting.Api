@@ -13,6 +13,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
 using FizzWare.NBuilder;
+using MediatR;
 
 
 namespace RairBudgeting.UnitTests.Api.v1;
@@ -20,6 +21,7 @@ namespace RairBudgeting.UnitTests.Api.v1;
 public class BudgetCategoriesControllerTests : UnitTestBase {
     private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ILogger<BudgetCategoriesController>> _loggerMock;
+    private Mock<IMediator> _mediatorMock;
 
     private BudgetCategoriesController _controller;
 
@@ -27,8 +29,9 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
     public void TestInit() {
         _unitOfWorkMock = new Mock<IUnitOfWork>(MockBehavior.Strict);
         _loggerMock = new Mock<ILogger<BudgetCategoriesController>>(MockBehavior.Strict);
+        _mediatorMock = new Mock<IMediator>(MockBehavior.Strict);
 
-        _controller = new BudgetCategoriesController(_unitOfWorkMock.Object, _loggerMock.Object, GetMapper().Object);
+        _controller = new BudgetCategoriesController(_unitOfWorkMock.Object, _loggerMock.Object, GetMapper().Object, _mediatorMock.Object);
     }
 
     [TestMethod]
@@ -36,7 +39,7 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateListOfSize(5).Build();
         var includeDeleted = false;
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Get(x => x.IsDeleted == includeDeleted || includeDeleted == true)).ReturnsAsync(entities);
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Get(x => x.IsDeleted == includeDeleted || includeDeleted == true, null, 10, 0, string.Empty)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.BudgetCategory>, IEnumerable<IBudgetCategory>>(dtos, entities);
 
         var results = _controller.List();
@@ -49,7 +52,8 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateListOfSize(5).Build();
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().List(false)).ThrowsAsync(new ArgumentException("An error occured."));
+        var includeDeleted = false;
+        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Get(x => x.IsDeleted == includeDeleted || includeDeleted == true, null, 0, 0, string.Empty)).ThrowsAsync(new ArgumentException("An error occured."));
 
         var results = _controller.List();
 
@@ -112,33 +116,30 @@ public class BudgetCategoriesControllerTests : UnitTestBase {
 
     [TestMethod]
     public void Create_200() {
-        var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
-        var requestDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().With(e => e.Id = 0).Build();
+        var requestDTO = Builder<RairBudgeting.Api.v1.Commands.BudgetCategoryAddCommand>.CreateNew().With(e => e.Id = 0).Build();
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Create(entities)).ReturnsAsync(entities);
-        _unitOfWorkMock.Setup(mock => mock.CompleteAsync()).ReturnsAsync(1);
-        SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.DTOs.BudgetCategory>(entities, requestDTO);
-        SetupMapper<RairBudgeting.Api.v1.DTOs.BudgetCategory, IBudgetCategory>(returnDTO, entities);
+        _mediatorMock.Setup(mock => mock.Send(requestDTO, default)).ReturnsAsync(returnDTO);
 
         var results = _controller.Create(requestDTO);
 
-        Assert.IsInstanceOfType(results.Result, typeof(OkObjectResult));
-        var httpResult = results.Result as OkObjectResult;
+        Assert.IsInstanceOfType(results.Result, typeof(ObjectResult));
+        var httpResult = results.Result as ObjectResult;
+        Assert.AreEqual(httpResult.StatusCode, 201);
 
         Assert.IsInstanceOfType(httpResult.Value, typeof(RairBudgeting.Api.v1.DTOs.BudgetCategory));
         var dto = httpResult.Value as RairBudgeting.Api.v1.DTOs.BudgetCategory;
         Assert.IsNotNull(dto);
-        Assert.AreEqual(entities.Id, dto.Id);
+        Assert.AreEqual(returnDTO.Id, dto.Id);
 
     }
 
     [TestMethod]
     public void Create_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.BudgetCategory>.CreateNew().Build();
-        var requestDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().With(e => e.Id = 0).Build();
+        var requestDTO = Builder<RairBudgeting.Api.v1.Commands.BudgetCategoryAddCommand>.CreateNew().With(e => e.Id = 0).Build();
         var returnDTO = Builder<RairBudgeting.Api.v1.DTOs.BudgetCategory>.CreateNew().Build();
         _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.BudgetCategory>().Create(entities)).ThrowsAsync(new ArgumentException("An error occured."));
-        SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.DTOs.BudgetCategory>(entities, requestDTO);
+        SetupMapper<IBudgetCategory, RairBudgeting.Api.v1.Commands.BudgetCategoryAddCommand>(entities, requestDTO);
 
         var results = _controller.Create(requestDTO);
 

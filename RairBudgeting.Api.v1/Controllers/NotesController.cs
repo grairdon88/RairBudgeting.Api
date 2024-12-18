@@ -8,6 +8,7 @@ using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
 namespace RairBudgeting.Api.v1.Controllers;
 
 [Route("api/[controller]")]
+[Produces("application/json")]
 [ApiController]
 public class NotesController : Controller {
     private IUnitOfWork _unitOfWork;

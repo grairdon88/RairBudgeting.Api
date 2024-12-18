@@ -36,7 +36,14 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    var apiVersion = builder.Configuration["ApiDocumentation:Version"];
+    options.SwaggerDoc(apiVersion, new Microsoft.OpenApi.Models.OpenApiInfo {
+        Version = apiVersion,
+        Title = builder.Configuration["ApiDocumentation:Title"],
+        Description = builder.Configuration["ApiDocumentation:Description"]
+    });
+});
 
 var app = builder.Build();
 

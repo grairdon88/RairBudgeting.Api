@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace RairBudgeting.Api.v1.Controllers;
 [Route("api/[controller]")]
+[Produces("application/json")]
 [ApiController]
 public class BudgetsController : ControllerBase {
     private readonly IUnitOfWork _unitOfWork;
