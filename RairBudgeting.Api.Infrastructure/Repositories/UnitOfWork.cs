@@ -10,13 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RairBudgeting.Api.Infrastructure.Repositories;
-public class UnitOfWork : IUnitOfWork {
-    private readonly BudgetContext _context;
-    private Hashtable _repositories;
+public class UnitOfWork(BudgetContext context) : IUnitOfWork {
+    private readonly BudgetContext _context = context;
+    private Hashtable? _repositories;
 
-    public UnitOfWork(BudgetContext context) {
-        _context = context;  
-    }
     public async Task<int> CompleteAsync() {
         return await _context.SaveChangesAsync();
     }
@@ -38,9 +35,9 @@ public class UnitOfWork : IUnitOfWork {
 
             var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
 
-            _repositories.Add(type, repositoryInstance);
+            if(repositoryInstance != null) _repositories.Add(type, repositoryInstance);
         }
 
-        return (IRepository<TEntity>)_repositories[type];
+        return _repositories[type] as IRepository<TEntity> ?? throw new InvalidOperationException("The provided entity is not a valid entity for data retrieval.");
     }
 }

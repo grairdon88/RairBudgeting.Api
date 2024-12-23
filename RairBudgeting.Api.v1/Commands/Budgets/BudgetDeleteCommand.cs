@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.Commands;
+namespace RairBudgeting.Api.v1.Commands.Budgets;
 public class BudgetDeleteCommand : IRequest<bool> {
     public BudgetDeleteCommand() {
     }

@@ -3,10 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RairBudgeting.Api.Domain.Entities;
-using RairBudgeting.Api.Domain.Specifications;
-using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
-using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.Commands.BudgetLines;
+using RairBudgeting.Api.v1.Commands.Budgets;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RairBudgeting.Api.v1.Controllers;
@@ -14,43 +12,39 @@ namespace RairBudgeting.Api.v1.Controllers;
 [Produces("application/json")]
 [ApiController]
 public class BudgetsController : ControllerBase {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<BudgetsController> _logger;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public BudgetsController(IUnitOfWork unitOfWork, ILogger<BudgetsController> logger, IMapper mapper, IMediator mediator) {
+    public BudgetsController(ILogger<BudgetsController> logger, IMapper mapper, IMediator mediator) {
         _logger = logger;
-        _unitOfWork = unitOfWork;
         _mapper = mapper;
         _mediator = mediator;
-    } 
-
-    [HttpGet]
-    [Route("list")]
-    public async Task<IActionResult> List(bool includeDeleted = false, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0) {
-        try {
-            var entities = await _unitOfWork.Repository<Budget>().Get(x => x.IsDeleted == false || includeDeleted == true, orderBy: null, pageSize, pageIndex);
-
-            return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entities));
-        }
-        catch (Exception ex) {
-            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "An unexpected error occured.",
-                Detail = ex.Message
-            });
-        }
     }
 
     [HttpGet]
-    [Route("matches")]
-
-    public async Task<IActionResult> Find([FromQuery] int id) {
+    [Route("list")]
+    [SwaggerOperation(
+        Summary = "Lists out all Budgets.",
+        Description = "Lists out all Budgets by the provided filter criteria.",
+        Tags = new[] { "Budgets" }
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.", typeof(IEnumerable<DTOs.BudgetCategory>))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> List(bool includeDeleted = false, [FromQuery] int pageSize = 0, [FromQuery] int pageIndex = 0, [FromQuery] IEnumerable<string> includedProperties = null) {
         try {
-            var entity = await _unitOfWork.Repository<Budget>().Find();
+            includedProperties ??= new List<string>();
 
-            return Ok(_mapper.Map<IEnumerable<DTOs.Budget>>(entity));
+            var budgetListCommand = new BudgetListCommand {
+                IncludeDeleted = includeDeleted,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                IncludedProperties = includedProperties
+            };
+
+            var entities = await _mediator.Send(budgetListCommand);
+
+            return Ok(entities);
         }
         catch (Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
@@ -62,11 +56,27 @@ public class BudgetsController : ControllerBase {
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] IEnumerable<string> includedEntities) {
+    [SwaggerOperation(
+        Summary = "Gets an existing Budget by the provided ID.",
+        Description = "Retrieves a Budget by ID.",
+        Tags = new[] { "Budgets" }
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.", typeof(DTOs.Budget))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Get([FromRoute] int id, [FromQuery] IEnumerable<string> includedProperties) {
         try {
-            var entities = await _unitOfWork.Repository<Budget>().Find(new BudgetWithLinesSpecification(id, includedEntities));
-            var entity = entities.FirstOrDefault();
-            return Ok(_mapper.Map<DTOs.Budget>(entity));
+            var budgetGetCommand = new BudgetGetCommand {
+                Id = id,
+                IncludedEntities = includedProperties
+            };
+
+            var entity = await _mediator.Send(budgetGetCommand);
+
+            if (entity == null)
+                return NotFound();
+
+            return Ok(entity);
         }
         catch (Exception ex) {
             return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails {
@@ -78,7 +88,13 @@ public class BudgetsController : ControllerBase {
     }
 
     [HttpPost]
-    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
+    [SwaggerOperation(
+        Summary = "Creates a Budget.",
+        Description = "Creates a Budget with the provided data.",
+        Tags = new[] { "Budgets" }
+    )]
+    [SwaggerResponse(StatusCodes.Status201Created, "Operation completed successfully.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromBody] BudgetAddCommand newEntity) {
         try {
             var createdEntity = await _mediator.Send(newEntity);
@@ -94,24 +110,68 @@ public class BudgetsController : ControllerBase {
     }
 
     [HttpPost]
-    [Route("BudgetLines")]
-    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Create([FromBody] AddBudgetLineToBudgetCommand newEntity) {
+    [Route("{budgetId}/BudgetLines")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Create([FromRoute] int budgetId, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
         var isCreated = await _mediator.Send(newEntity);
 
         return Ok();
     }
 
-    [HttpPut]
-    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
-    public async Task<IActionResult> Update([FromBody] BudgetUpdateCommand entity) {
+    [HttpPost]
+    [Route("{budgetId}/BudgetLines/paid")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> MarkBudgetLinesPaid([FromRoute] int budgetId, [FromBody] MarkBudgetLineAsPaidCommand requestBody) {
+        //  Get the budget
+        var getBudgetCommand = new BudgetGetCommand {
+            Id = budgetId
+        };
+        var budget = await _mediator.Send(getBudgetCommand);
+
+        if(budget == null)
+            return NotFound();
+
+        //  Set the budget ID for processing the payments
+        requestBody.BudgetId = budgetId;
+        var isProcessed = await _mediator.Send(requestBody);
+
+        if(isProcessed == false)
+            return NotFound();
+
+        return Ok();
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(
+        Summary = "Updates an existing Budget",
+        Description = "Updates an existing Budget.",
+        Tags = new[] { "Budgets" }
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] BudgetUpdateCommand entity) {
+        var budgetGetCommand = new BudgetGetCommand {
+            Id = id
+        };
+
         var isUpdated = await _mediator.Send(entity);
 
-        return Ok(entity);
+        return Ok();
     }
 
     [HttpDelete]
-    [SwaggerResponse(200, "Successful operation", Type = typeof(DTOs.Budget))]
+    [SwaggerOperation(
+        Summary = "Deletes Budget",
+        Description = "Deletes a list of Budget by provided IDs.",
+        Tags = new[] { "Budgets" }
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete([FromQuery] int id) {
         try {
             var deleteCommand = new BudgetDeleteCommand(id);

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.Commands;
+namespace RairBudgeting.Api.v1.Commands.Budgets;
 public class BudgetAddCommand : IRequest<Budget> {
     public int Id { get; set; }
     public DateTime BudgetTime { get; set; }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
+using RairBudgeting.Api.v1.Commands.BudgetCategories;
 using RairBudgeting.Api.v1.DTOs;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.Commands.Handlers;
+namespace RairBudgeting.Api.v1.CommandHandlers.BudgetCategories;
 public class BudgetCategoryAddCommandHandler : IRequestHandler<BudgetCategoryAddCommand, BudgetCategory> {
     private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;

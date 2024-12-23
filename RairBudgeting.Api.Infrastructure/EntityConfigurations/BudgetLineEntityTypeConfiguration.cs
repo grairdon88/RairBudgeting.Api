@@ -22,10 +22,15 @@ public class BudgetLineEntityTypeConfiguration : IEntityTypeConfiguration<Budget
             .HasMaxLength(50)
             .IsRequired();
 
-        //builder.Property(b => b.Amount)
-        //    .UsePropertyAccessMode(PropertyAccessMode.Field)
-        //    .HasMaxLength(50)
-        //    .IsRequired();
+        builder.Property(b => b.Amount)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasDefaultValue(0.0m)
+            .IsRequired();
+
+        builder.Property(b => b.PaymentAmount)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasDefaultValue(0.0m)
+            .IsRequired();
 
         builder.Property(b => b.IsDeleted)
             .UsePropertyAccessMode(PropertyAccessMode.Property) 
@@ -44,7 +49,7 @@ public class BudgetLineEntityTypeConfiguration : IEntityTypeConfiguration<Budget
 
         builder.HasOne(o => o.BudgetCategory)
             .WithMany()
-            .HasForeignKey("BudgetCategoryId")
+            .HasForeignKey(b => b.BudgetCategoryId)
             .IsRequired(true);
     }
 }

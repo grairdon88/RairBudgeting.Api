@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.Commands.Budgets;
 
-namespace RairBudgeting.Api.v1.Commands.Handlers;
+namespace RairBudgeting.Api.v1.CommandHandlers.Budgets;
 public class BudgetUpdateCommandHandler : IRequestHandler<BudgetUpdateCommand, bool> {
 
     private readonly IMediator _mediator;
@@ -23,10 +23,10 @@ public class BudgetUpdateCommandHandler : IRequestHandler<BudgetUpdateCommand, b
     }
 
     public async Task<bool> Handle(BudgetUpdateCommand request, CancellationToken cancellationToken) {
-        var entity = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.Id);
+        var entity = await _unitOfWork.Repository<Budget>().GetById(request.Id);
         entity.BudgetTime = request.BudgetTime;
         entity.IsDeleted = request.IsDeleted;
-        await _unitOfWork.Repository<Domain.Entities.Budget>().Update(entity);
+        await _unitOfWork.Repository<Budget>().Update(entity);
 
         return true;
     }

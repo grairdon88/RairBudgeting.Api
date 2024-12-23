@@ -14,7 +14,7 @@ public interface IRepository<T>
     Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         int pageSize = 0, int pageIndex = 0,
-        string includedProperties = "");
+        IEnumerable<string> includedProperties = null);
     Task<T> GetById(int id);
     Task<T> Create(T entity);
     Task<T> CreateEntry(T entity);

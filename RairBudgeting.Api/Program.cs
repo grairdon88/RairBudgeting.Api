@@ -43,6 +43,7 @@ builder.Services.AddSwaggerGen(options => {
         Title = builder.Configuration["ApiDocumentation:Title"],
         Description = builder.Configuration["ApiDocumentation:Description"]
     });
+    options.EnableAnnotations();
 });
 
 var app = builder.Build();

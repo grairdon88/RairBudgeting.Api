@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.Commands;
+namespace RairBudgeting.Api.v1.Commands.BudgetCategories;
 public class BudgetCategoryAddCommand : IRequest<BudgetCategory> {
     public int Id { get; set; }
 

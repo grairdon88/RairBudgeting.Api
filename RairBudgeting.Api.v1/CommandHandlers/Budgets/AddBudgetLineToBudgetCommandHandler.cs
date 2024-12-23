@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
-using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.Commands.BudgetLines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RairBudgeting.Api.v1.Commands.Handlers;
+namespace RairBudgeting.Api.v1.CommandHandlers.Budgets;
 public class AddBudgetLineToBudgetCommandHandler : IRequestHandler<AddBudgetLineToBudgetCommand, bool> {
     private readonly IMediator _mediator;
     private readonly IUnitOfWork _unitOfWork;
@@ -24,11 +24,6 @@ public class AddBudgetLineToBudgetCommandHandler : IRequestHandler<AddBudgetLine
         var entityObject = _mapper.Map<Domain.Entities.BudgetLine>(request);
         var budgetCategory = await _unitOfWork.Repository<Domain.Entities.BudgetCategory>().GetById(request.BudgetCategoryId);
         entityObject.BudgetCategory = budgetCategory;
-
-        //var budget = await _unitOfWork.Repository<Domain.Entities.Budget>().GetById(request.BudgetId);
-        //if (budget != null) {
-        //    budget.Lines.
-        //}
 
         var createdEntity = await _unitOfWork.Repository<Domain.Entities.BudgetLine>().CreateEntry(entityObject);
 

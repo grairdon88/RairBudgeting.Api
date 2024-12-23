@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
 using RairBudgeting.Api.Infrastructure.Repositories.Interfaces;
-using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.Commands.Budgets;
 using RairBudgeting.Api.v1.Controllers;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 namespace RairBudgeting.UnitTests.Api.v1;
 [TestClass]
 public class BudgetsControllerTests : UnitTestBase {
-    private Mock<IUnitOfWork> _unitOfWorkMock;
     private Mock<ILogger<BudgetsController>> _loggerMock;
     private Mock<IMediator> _mediatorMock;
 
@@ -24,11 +23,10 @@ public class BudgetsControllerTests : UnitTestBase {
 
     [TestInitialize]
     public void TestInit() {
-        _unitOfWorkMock = new Mock<IUnitOfWork>(MockBehavior.Strict);
         _loggerMock = new Mock<ILogger<BudgetsController>>(MockBehavior.Strict);
         _mediatorMock = new Mock<IMediator>(MockBehavior.Strict);
 
-        _controller = new BudgetsController(_unitOfWorkMock.Object, _loggerMock.Object, GetMapper().Object, _mediatorMock.Object);
+        _controller = new BudgetsController(_loggerMock.Object, GetMapper().Object, _mediatorMock.Object);
     }
 
     [TestMethod]
@@ -36,7 +34,6 @@ public class BudgetsControllerTests : UnitTestBase {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
         var includeDeleted = false;
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false || includeDeleted == true, null, 10, 0, string.Empty)).ReturnsAsync(entities);
         SetupMapper<IEnumerable<RairBudgeting.Api.v1.DTOs.Budget>, IEnumerable<IBudget>>(dtos, entities);
 
         var results = _controller.List();
@@ -50,7 +47,6 @@ public class BudgetsControllerTests : UnitTestBase {
     public void List_500() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateListOfSize(5).Build();
         var dtos = Builder<RairBudgeting.Api.v1.DTOs.Budget>.CreateListOfSize(5).Build();
-        _unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Get(x => x.IsDeleted == false, null, 0, 0, string.Empty)).ThrowsAsync(new ArgumentException("An error occured."));
 
         var results = _controller.List();
 
@@ -100,11 +96,7 @@ public class BudgetsControllerTests : UnitTestBase {
     public void Delete_200() {
         var entities = Builder<RairBudgeting.Api.Domain.Entities.Budget>.CreateNew().Build();
         var requestDTO = Builder<BudgetDeleteCommand>.CreateNew().Build();
-        //_unitOfWorkMock.Setup(mock => mock.Repository<RairBudgeting.Api.Domain.Entities.Budget>().Create(entities)).ReturnsAsync(entities);
-        //_unitOfWorkMock.Setup(mock => mock.CompleteAsync()).ReturnsAsync(1);
         _mediatorMock.Setup(mock => mock.Send(It.IsAny<BudgetDeleteCommand>(), default)).ReturnsAsync(true);
-        //SetupMapper<IBudget, BudgetAddCommand>(entities, requestDTO);
-        //SetupMapper<RairBudgeting.Api.v1.DTOs.Budget, IBudget>(returnDTO, entities);
 
         var results = _controller.Delete(1);
 

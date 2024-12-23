@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using RairBudgeting.Api.Domain.Interfaces.Entities;
-using RairBudgeting.Api.v1.Commands;
+using RairBudgeting.Api.v1.Commands.BudgetCategories;
+using RairBudgeting.Api.v1.Commands.BudgetLines;
+using RairBudgeting.Api.v1.Commands.Budgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +21,9 @@ public class MapProfile : Profile {
         CreateMap<BudgetLine, Domain.Entities.BudgetLine>();
         CreateMap<IPayment, Payment>();
         CreateMap<BudgetAddCommand, Domain.Entities.Budget>();
+        CreateMap<BudgetCategoryAddCommand, Domain.Entities.BudgetCategory>();
         CreateMap<BudgetUpdateCommand, Domain.Entities.Budget>();
+        CreateMap<BudgetCategoryUpdateCommand, Domain.Entities.BudgetCategory>();
         CreateMap<AddBudgetLineToBudgetCommand, Domain.Entities.BudgetLine>();
     }
 }

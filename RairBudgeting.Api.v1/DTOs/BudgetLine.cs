@@ -5,4 +5,6 @@ public class BudgetLine {
     public BudgetCategory BudgetCategory { get; set; }
     public IEnumerable<Note> Notes { get; set; }
     public bool IsDeleted { get; set; }
+    public decimal Amount { get; set; }
+    public decimal PaymentAmount { get; set; }
 }

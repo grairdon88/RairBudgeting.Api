@@ -8,5 +8,4 @@ namespace RairBudgeting.Api.Domain.Interfaces.Entities;
 public interface IBudgetCategory : IEntity {
     string Name { get; set; }
     public string Description { get; set; }
-    public bool IsDeleted { get; set; }
 }

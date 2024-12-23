@@ -20,7 +20,7 @@ public class Repository<T> : IRepository<T> where T : Entity {
         _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         _dbSet = _context.Set<T>();
     }
-    
+
     public virtual async Task<T> Create(T entity) {
         await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
@@ -35,14 +35,16 @@ public class Repository<T> : IRepository<T> where T : Entity {
         return entity;
     }
 
-    public virtual async Task<IEnumerable<T>> Find(ISpecification<T> specification = null) {
+    public virtual async Task<IEnumerable<T>> Find(ISpecification<T>? specification = null) {
+        if(specification == null) throw new ArgumentException("Specification cannot be null.", nameof(specification));
+
         return ApplySpecification(specification);
     }
 
     public virtual async Task DeleteById(int id) {
         var entity = await _dbSet.FindAsync(id);
 
-        if (entity != null) {
+        if(entity != null) {
             entity.IsDeleted = true;
             _dbSet.Update(entity);
 
@@ -50,25 +52,36 @@ public class Repository<T> : IRepository<T> where T : Entity {
         }
     }
 
-    public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int pageSize = 0, int pageIndex = 0,
-        string includedProperties = "") {
+    public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, int pageSize = 0, int pageIndex = 0,
+        IEnumerable<string>? includedProperties = null) {
+        if(pageSize < 0) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size cannot be negative.");
+        if(pageIndex < 0) throw new ArgumentOutOfRangeException(nameof(pageIndex), "Page index cannot be negative.");
+
         IQueryable<T> query = _dbSet;
 
         if(filter != null) {
             query = query.Where(filter);
         }
 
-        foreach (var includedProperty in includedProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) {
-            query = query.Include(includedProperty);
-        };
+        if(includedProperties != null) {
+            foreach(var includedProperty in includedProperties) {
+                if(string.IsNullOrWhiteSpace(includedProperty)) {
+                    throw new ArgumentException("Included property cannot be null or whitespace.", nameof(includedProperties));
+                }
+                query = query.Include(includedProperty);
+            }
+        }
 
         if(orderBy != null) {
-            return await orderBy(query).Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
+            query = orderBy(query);
         }
-        else {
-            return await query.Skip(pageSize * pageIndex).Take(pageSize).ToListAsync();
+
+        if(pageSize > 0) {
+            query = query.Skip(pageSize * pageIndex).Take(pageSize);
         }
+
+        return await query.ToListAsync();
     }
 
     public virtual async Task<T> GetById(int id) {
