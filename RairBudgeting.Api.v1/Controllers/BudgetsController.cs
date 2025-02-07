@@ -111,16 +111,34 @@ public class BudgetsController : ControllerBase {
 
     [HttpPost]
     [Route("{budgetId}/BudgetLines")]
+    [SwaggerOperation(
+        Summary = "Creates a Budget Line",
+        Description = "Creates a Budget Line and associates it with a Budget entity. ",
+        Tags = new[] { "Budgets" }
+    )]
     [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Create([FromRoute] int budgetId, [FromBody] AddBudgetLineToBudgetCommand newEntity) {
+        var getBudgetCommand = new BudgetGetCommand {
+            Id = budgetId
+        };
+        var budget = await _mediator.Send(getBudgetCommand);
+
+        if(budget == null)
+            return NotFound();
+
         var isCreated = await _mediator.Send(newEntity);
 
         return Ok();
     }
 
-    [HttpPost]
+    [HttpPut]
+    [SwaggerOperation(
+        Summary = "Marks provided Budget Line(s) as paid.",
+        Description = "Takes in a list of Budget Line IDs and marks them as paid for a specified Budget Entity.",
+        Tags = new[] { "Budgets" }
+    )]
     [Route("{budgetId}/BudgetLines/paid")]
     [SwaggerResponse(StatusCodes.Status200OK, "Operation completed successfully.")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "The provided Budget ID could not be found.")]
